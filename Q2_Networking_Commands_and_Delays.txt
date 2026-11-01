@@ -1,0 +1,90 @@
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 2: USAGE OF NETWORKING COMMANDS, TELNET REMOTE LOGIN, AND DELAY ANALYSIS
+================================================================================
+
+2.1 PING COMMAND USAGE AND OBSERVATIONS
+----------------------------------------
+A. Purpose:
+   - Tests end-to-end IP network reachability between source and destination hosts.
+   - Measures packet loss and Round-Trip Time (RTT) in milliseconds.
+
+B. Underlying Protocol:
+   - Uses **ICMP (Internet Control Message Protocol)** at Layer 3:
+     1. Source transmits an **ICMP Echo Request** (Type 8, Code 0) packet.
+     2. Target machine responds with an **ICMP Echo Reply** (Type 0, Code 0) packet.
+
+C. Command Syntax and Key Flags:
+   - Windows: `ping -n <count> -l <size_in_bytes> <host_or_ip>`
+   - Linux:   `ping -c <count> -s <size_in_bytes> <host_or_ip>`
+   - Example:
+     > `ping -n 4 google.com`
+     Outputs: Sent packets, received packets, lost packets (%), min/max/average RTT.
+
+
+2.2 TRACEROUTE / TRACERT COMMAND USAGE AND OBSERVATIONS
+--------------------------------------------------------
+A. Purpose:
+   - Maps the exact hop-by-hop path (list of intermediate Layer 3 routers) traversed 
+     by an IP packet toward a target destination.
+   - Diagnoses where packet loss, latency spikes, or network routing loops occur.
+
+B. Underlying Mechanism:
+   - Operates by manipulating the **TTL (Time to Live)** field in the IPv4 header:
+     1. Source sends a probe packet with `TTL = 1`.
+     2. The first router decrements TTL to 0, drops the packet, and sends back an 
+        **ICMP Time Exceeded** message (Type 11, Code 0). The router's IP is recorded.
+     3. The source increments TTL (`TTL = 2`, `TTL = 3`, ...) for subsequent probes.
+     4. This continues until the probe reaches the target destination, which replies with 
+        an ICMP Echo Reply (Windows tracert) or ICMP Port Unreachable (Linux traceroute UDP probe).
+
+C. Command Syntax:
+   - Windows: `tracert -d <destination>`  (-d avoids reverse DNS resolution for speed)
+   - Linux:   `traceroute -n <destination>`
+
+
+2.3 REMOTE LOGIN USING TELNET SESSION
+--------------------------------------
+A. Purpose:
+   - Provides a bidirectional, interactive text-oriented communications facility using a 
+     virtual terminal connection over a TCP/IP network.
+   - Default Transport Port: **TCP Port 23**.
+
+B. Usage / Syntax:
+   - Initiating connection:
+     > `telnet <remote_host_ip_or_hostname> <port>`
+     Example: `telnet 192.168.1.100 23`
+   - Testing connectivity to network application ports (e.g., HTTP / SMTP):
+     > `telnet google.com 80`
+     Type: `GET / HTTP/1.1` followed by two Enter keys to receive HTTP headers.
+
+C. Security Vulnerability & Modern Alternative:
+   - **Vulnerability**: Telnet transmits all data, including administrative usernames and 
+     passwords, in completely **unencrypted plain text**, making it highly susceptible to 
+     eavesdropping and Man-In-The-Middle (MITM) packet sniffing attacks.
+   - **Modern Standard**: **SSH (Secure Shell, TCP Port 22)** has replaced Telnet. SSH 
+     encrypts all payload and authentication traffic using strong cryptographic protocols 
+     (RSA, ECDSA, AES).
+
+
+2.4 MEASURING TYPICAL AVERAGE DELAYS ACROSS NETWORK LOCATIONS
+--------------------------------------------------------------
+A. Components of End-to-End Nodal Delay:
+   Total Delay (d_nodal) = d_proc + d_queue + d_trans + d_prop
+   - **Processing Delay (d_proc)**: Time router takes to examine packet header and determine route.
+   - **Queuing Delay (d_queue)**: Time packet spends waiting in router buffer queues.
+   - **Transmission Delay (d_trans)**: Time to push packet bits onto physical link (Packet Size / Bandwidth).
+   - **Propagation Delay (d_prop)**: Time for a bit to physically travel down medium (Distance / Speed of Light in medium).
+
+B. Typical Empirical Latency Profiles Measured:
+   +------------------------------+---------------------------+---------------------------------+
+   | Location / Segment           | Typical Round-Trip (RTT)  | Characteristic                  |
+   +------------------------------+---------------------------+---------------------------------+
+   | Localhost (Loopback)         | < 0.1 ms                  | Software stack only (no cable)  |
+   | Same Lab Subnet (Switch)     | < 1 ms                    | Direct Layer 2 frame forwarding |
+   | Campus Gateway / Core Router | 1 ms - 5 ms               | Layer 3 routing & NAT processing|
+   | Regional / Domestic WAN      | 25 ms - 60 ms             | Fiber backbone across state     |
+   | Overseas / International WAN | 130 ms - 260 ms           | Undersea intercontinental cables|
+   +------------------------------+---------------------------+---------------------------------+
+================================================================================
+

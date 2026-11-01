@@ -1,0 +1,24 @@
+================================================================================
+IT302 DCCN LAB - QUESTION 4.2: TRACEROUTE FOR FACEBOOK.COM
+================================================================================
+Target Host        : facebook.com
+Target IP          : 57.144.56.1
+Command Executed   : tracert -d -h 10 facebook.com
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    38 ms   112 ms   49.44.59.153     National Carrier Backbone Transit
+    5  100 ms    37 ms    37 ms   49.44.59.153     Backbone Transit Router
+    6   56 ms    56 ms    56 ms   172.31.2.63      Meta Gateway Interconnect
+    7   60 ms    60 ms    60 ms   157.240.66.228   Meta AS32934 Core Router
+    8   63 ms    63 ms    63 ms   129.134.42.112   Meta Infrastructure Node
+    9   59 ms    59 ms    60 ms   129.134.118.12   Meta Edge Router
+   10    *        *        *      Request timed out (Firewall blocks ICMP probe)
+
+Result: Trace reached Meta infrastructure edge in 9 active hops. Average latency: ~59 ms.
+================================================================================
+

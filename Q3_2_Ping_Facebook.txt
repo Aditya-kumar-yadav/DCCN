@@ -1,0 +1,23 @@
+================================================================================
+IT302 DCCN LAB - QUESTION 3.2: PING STATISTICS FOR FACEBOOK.COM
+================================================================================
+Target URL         : facebook.com
+Resolved IP        : 57.144.56.1
+Command Executed   : ping -n 4 facebook.com
+
+TERMINAL OUTPUT:
+Pinging facebook.com [57.144.56.1] with 32 bytes of data:
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 4
+- Packet Loss Rate   : 0% (Success)
+- Minimum RTT        : 58 ms
+- Maximum RTT        : 58 ms
+- Average RTT        : 58 ms
+================================================================================
+

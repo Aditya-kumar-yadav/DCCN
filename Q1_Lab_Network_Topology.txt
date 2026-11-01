@@ -1,0 +1,101 @@
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 1: LAB NETWORK TOPOLOGY, INTERFACES, ROUTERS, SWITCHES, AND IP POOLS
+================================================================================
+
+1.1 LAB NETWORK TOPOLOGY
+-------------------------
+In a typical computer networking laboratory, an **Extended Star Topology** (Hierarchical Tree) 
+is implemented for optimal scalability, manageability, and fault isolation:
+
+  [Internet / College Backbone WAN]
+                 |
+          [Core Router / Firewall]  <--- Default Gateway (Layer 3)
+                 |
+      [Distribution / Layer 3 Switch]
+           /           \
+  [Access Switch 1]   [Access Switch 2]  <--- Layer 2 Switches (Rack-mounted)
+     |    |    |         |    |    |
+    PC1  PC2  PC3       PC4  PC5  PC6   <--- Lab Workstations (Star topology)
+
+- **Access Layer**: Unmanaged or managed Layer-2 switches connecting individual desktop 
+  workstations via Category 6 (Cat6) UTP cables terminating in RJ-45 wall ports.
+- **Distribution Layer**: Aggregates traffic from access switches and provides VLAN segmentation 
+  (e.g., separate VLANs for Lab Systems, Faculty, and Servers).
+- **Core Layer**: High-speed core router/firewall handling inter-VLAN routing, Network Address 
+  Translation (NAT), traffic filtering, and uplink to the campus backbone.
+
+
+1.2 LOCATING DIFFERENT NETWORK INTERFACES
+-----------------------------------------
+A network interface represents a node's physical or logical connection to the network.
+
+A. Physical Interfaces:
+   - **Ethernet (NIC)**: Identified as `eth0`, `enp3s0` (Linux) or `Ethernet 1` (Windows). 
+     Contains a permanent hardware MAC address (48-bit / 6 octets, e.g., `50:7B:9D:4A:BC:12`).
+   - **Wireless (Wi-Fi)**: Identified as `wlan0`, `wlp2s0` (Linux) or `Wi-Fi` (Windows).
+
+B. Logical / Virtual Interfaces:
+   - **Loopback (`lo`)**: IP `127.0.0.1/8` (`::1` in IPv6). Used for local inter-process communication 
+     and diagnostic self-testing of the TCP/IP network stack without transmitting over physical media.
+   - **Virtual Bridge/Tun/Tap**: Created by hypervisors or VPNs (`docker0`, `tun0`).
+
+C. Commands to locate and inspect interfaces:
+   - Windows: 
+     > `ipconfig /all`     (Lists MAC address, IPv4/IPv6, subnet mask, DHCP server, DNS)
+     > `getmac /v`         (Lists network adapter hardware MAC addresses)
+     > `route print`       (Displays active IPv4/IPv6 routing table and gateway interfaces)
+   - Linux:
+     > `ip addr show` or `ifconfig -a`  (Lists all interfaces and assigned IPs)
+     > `ip link show`                   (Shows state and MAC address)
+     > `netstat -i`                      (Displays interface packet transmission statistics)
+
+
+1.3 ROLE AND LOCATION OF ROUTERS AND SWITCHES
+----------------------------------------------
+A. Switches (Data Link Layer - OSI Layer 2):
+   - **Location**: Mounted inside 19-inch lab server racks or wall-mount distribution boxes.
+   - **Function**: Connects workstations inside the same Local Area Network (broadcast domain).
+   - **Working Principle**: Inspects incoming Ethernet frame headers, builds a Dynamic MAC 
+     Address Table (CAM table: Port <-> MAC), and forwards frames directly to destination ports 
+     (micro-segmentation), eliminating collisions.
+
+B. Routers (Network Layer - OSI Layer 3):
+   - **Location**: Located in the central server/networking room at the lab perimeter.
+   - **Function**: Connects distinct IP subnets (e.g., Lab LAN <-> Campus Backbone <-> Internet).
+   - **Working Principle**: Reads Layer 3 IP headers, evaluates routing tables using longest-prefix 
+     matching, decrements TTL (Time to Live), and routes packets across networks.
+   - **Additional Services**: Runs DHCP server daemon to assign dynamic IP leases, NAT to translate 
+     private lab IPs to public IPs, and Access Control Lists (ACLs) for security.
+
+
+1.4 STUDYING DIFFERENT POOLS OF IP ADDRESSES
+---------------------------------------------
+IPv4 addresses are 32-bit identifiers split into standard classes and special functional pools:
+
+A. Classful Addressing Overview:
+   +-------+--------------------+--------------------+-----------------------+
+   | Class | First Octet Range  | Default Subnet     | Purpose / Application |
+   +-------+--------------------+--------------------+-----------------------+
+   | A     | 1 - 127            | 255.0.0.0 (/8)     | Very large networks   |
+   | B     | 128 - 191          | 255.255.0.0 (/16)  | Medium-sized networks |
+   | C     | 192 - 223          | 255.255.255.0 (/24)| Small Local Networks  |
+   | D     | 224 - 239          | N/A                | Multicast groups      |
+   | E     | 240 - 255          | N/A                | Experimental/Reserved |
+   +-------+--------------------+--------------------+-----------------------+
+
+B. Private IP Address Pools (RFC 1918 - Non-routable on Public Internet):
+   - Class A Private: `10.0.0.0` to `10.255.255.255`       (10.0.0.0/8    = 16,777,216 IPs)
+   - Class B Private: `172.16.0.0` to `172.31.255.255`     (172.16.0.0/12 = 1,048,576 IPs)
+   - Class C Private: `192.168.0.0` to `192.168.255.255`   (192.168.0.0/16= 65,536 IPs)
+   *Note: Lab computers typically receive private IP addresses from either `172.16.x.x` or `192.168.x.x`.*
+
+C. Special and Reserved IP Pools:
+   - **Loopback Address Block**: `127.0.0.0/8` (e.g., `127.0.0.1` = localhost)
+   - **APIPA (Automatic Private IP Addressing)**: `169.254.0.0/16` (assigned by OS when DHCP fails)
+   - **Broadcast Addresses**:
+     - Limited Broadcast: `255.255.255.255` (broadcasts to current local subnet)
+     - Directed Broadcast: Host bits all 1s (e.g., `192.168.1.255` for `192.168.1.0/24`)
+   - **Default Route / Any Network**: `0.0.0.0/0`
+================================================================================
+

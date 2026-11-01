@@ -1,0 +1,103 @@
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 3: PING COMMAND STATISTICS AND ROUND-TRIP TIME (RTT) MEASUREMENTS
+================================================================================
+
+3.1 PING STATISTICS FOR GOOGLE.COM
+-----------------------------------
+Command Executed:
+`ping -n 4 google.com`
+
+Terminal Output:
+Pinging google.com [142.250.143.138] with 32 bytes of data:
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+
+Ping statistics for 142.250.143.138:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 38ms, Maximum = 38ms, Average = 38ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 142.250.143.138
+- Packets Sent          : 4
+- Packets Received      : 4
+- Packet Loss Rate      : 0% (Success)
+- Minimum RTT           : 38 ms
+- Maximum RTT           : 38 ms
+- Average RTT           : 38 ms
+
+
+3.2 PING STATISTICS FOR FACEBOOK.COM
+-------------------------------------
+Command Executed:
+`ping -n 4 facebook.com`
+
+Terminal Output:
+Pinging facebook.com [57.144.56.1] with 32 bytes of data:
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+
+Ping statistics for 57.144.56.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 58ms, Maximum = 58ms, Average = 58ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 57.144.56.1
+- Packets Sent          : 4
+- Packets Received      : 4
+- Packet Loss Rate      : 0% (Success)
+- Minimum RTT           : 58 ms
+- Maximum RTT           : 58 ms
+- Average RTT           : 58 ms
+
+
+3.3 PING STATISTICS FOR BITMESRA.AC.IN
+---------------------------------------
+Command Executed:
+`ping -n 4 bitmesra.ac.in`
+
+Terminal Output:
+Pinging bitmesra.ac.in [192.124.249.170] with 32 bytes of data:
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Request timed out.
+
+Ping statistics for 192.124.249.170:
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 150ms, Maximum = 150ms, Average = 150ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 192.124.249.170
+- Packets Sent          : 4
+- Packets Received      : 3
+- Packet Loss Rate      : 25% (Partial loss due to firewall/ICMP rate-limiting)
+- Minimum RTT           : 150 ms
+- Maximum RTT           : 150 ms
+- Average RTT           : 150 ms
+
+
+3.4 COMPARATIVE ANALYSIS TABLE
+-------------------------------
++----+-----------------+------------------+---------------+-------------+-------------+
+| No | Target URL      | Resolved IP      | Loss Rate (%) | Status      | Average RTT |
++----+-----------------+------------------+---------------+-------------+-------------+
+| 1  | google.com      | 142.250.143.138  | 0%            | Responding  | 38 ms       |
+| 2  | facebook.com    | 57.144.56.1      | 0%            | Responding  | 58 ms       |
+| 3  | bitmesra.ac.in  | 192.124.249.170  | 25%           | Responding  | 150 ms      |
++----+-----------------+------------------+---------------+-------------+-------------+
+
+Observations:
+- Google had the lowest latency (38ms) due to nearby Edge PoP (Point of Presence) CDN caching.
+- Facebook maintained a stable RTT of 58ms with 0% loss.
+- BIT Mesra server hosted behind a security firewall/WAF (Web Application Firewall) had higher 
+  delay (150ms) and dropped 1 probe due to strict ICMP traffic throttling policies.
+================================================================================
+

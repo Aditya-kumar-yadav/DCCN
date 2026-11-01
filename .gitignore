@@ -1,0 +1,12 @@
+# Compiled Binaries & Object Files
+*.exe
+*.o
+*.obj
+*.out
+
+# Generated runtime artifacts
+downloaded_page.html
+
+# OS specific files
+Thumbs.db
+.DS_Store

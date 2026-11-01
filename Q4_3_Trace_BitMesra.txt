@@ -1,0 +1,24 @@
+================================================================================
+IT302 DCCN LAB - QUESTION 4.3: TRACEROUTE FOR BITMESRA.AC.IN
+================================================================================
+Target Host        : bitmesra.ac.in
+Target IP          : 192.124.249.170
+Command Executed   : tracert -d -h 10 bitmesra.ac.in
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    37 ms    37 ms   49.44.59.153     National Backbone Core Network
+    5   37 ms    37 ms    37 ms   49.44.59.153     National Backbone Transit Router
+    6   38 ms    38 ms    37 ms   49.45.4.253      Carrier Exchange Gateway
+    7  148 ms   149 ms   149 ms   103.198.140.215  International Peering Link
+    8  150 ms   149 ms   150 ms   62.115.155.138   Arelion / Telia Global Carrier Transit
+    9  179 ms   178 ms   178 ms   62.115.124.54    Sucuri Cloud Security Transit Router
+   10  161 ms   161 ms   160 ms   62.115.118.59    Sucuri Anycast Web Security Gateway
+
+Result: Trace completed over international transit carriers in 10 hops. Average latency: ~161 ms.
+================================================================================
+

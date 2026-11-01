@@ -1,0 +1,76 @@
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 11: STUDY AND IMPLEMENTATION OF SOCKET PROGRAMMING & CLIENT-SERVER MODEL
+================================================================================
+
+11.1 INTRODUCTION TO SOCKET PROGRAMMING
+----------------------------------------
+A socket is an endpoint for bidirectional, inter-process communication (IPC) across an 
+IP network. A network socket is bound to a combination of an **IP Address** and a **Port Number** 
+(e.g., `127.0.0.1:8080`).
+
+Sockets operate in two primary modes:
+1. **Stream Sockets (`SOCK_STREAM`)**: Based on TCP (Transmission Control Protocol). Connection-oriented, 
+   reliable, ordered, and error-checked byte stream delivery.
+2. **Datagram Sockets (`SOCK_DGRAM`)**: Based on UDP (User Datagram Protocol). Connectionless, 
+   unreliable, minimal overhead, message-boundary preserving.
+
+
+11.2 TCP CLIENT-SERVER ARCHITECTURE WORKFLOW
+---------------------------------------------
+
+         SERVER                                          CLIENT
+   ------------------                             -------------------
+     socket()                                           socket()
+        |                                                  |
+      bind()                                               |
+        |                                                  |
+     listen()                                              |
+        |                                                  |
+     accept()  <---------- [SYN: Connection Request] ---- connect()
+        |     ---------- [SYN-ACK: Acknowledgment] ------->|
+        |     <---------- [ACK: Connection Established] ---|
+        |                                                  |
+     recv()    <---------- [Data Request] ----------------- send()
+        |                                                  |
+     send()    ---------- [Data Response] ----------------> recv()
+        |                                                  |
+     close()   <---------- [FIN / Close] ------------------ close()
+
+
+11.3 CORE SOCKET SYSTEM CALL PRIMITIVES (C API)
+------------------------------------------------
+1. `socket(int domain, int type, int protocol)`:
+   - Creates an unbound network socket descriptor.
+   - Example: `int fd = socket(AF_INET, SOCK_STREAM, 0);` (IPv4, TCP).
+
+2. `bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`:
+   - Assigns a local IP address and port number to the socket.
+   - Used by servers to listen on a well-known port.
+
+3. `listen(int sockfd, int backlog)`:
+   - Marks the socket as passive (ready to accept incoming client connections).
+   - `backlog`: Maximum number of pending connections queued.
+
+4. `accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)`:
+   - Blocks until an incoming connection arrives.
+   - Extracts first connection from queue and returns a NEW active connected socket descriptor.
+
+5. `connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`:
+   - Invoked by the client to initiate the 3-Way TCP handshake with the server.
+
+6. `send()` / `recv()` (or `write()` / `read()`):
+   - Transmits and receives data buffers over the established TCP byte stream.
+
+7. `close()` (or `closesocket()` on Windows):
+   - Terminates socket connection and releases OS descriptor resources.
+
+
+11.4 SOURCE CODE IMPLEMENTATION
+--------------------------------
+The corresponding C source code files are provided:
+- `Q11_1_Socket_Server.c`: Standalone TCP Server that listens on port 8080 and replies to client.
+- `Q11_2_Socket_Client.c`: Standalone TCP Client that connects to 127.0.0.1:8080 and exchanges data.
+Both files include cross-platform support (Linux POSIX & Windows Winsock).
+================================================================================
+

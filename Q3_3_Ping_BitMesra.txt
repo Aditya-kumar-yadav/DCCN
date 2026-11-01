@@ -1,0 +1,23 @@
+================================================================================
+IT302 DCCN LAB - QUESTION 3.3: PING STATISTICS FOR BITMESRA.AC.IN
+================================================================================
+Target URL         : bitmesra.ac.in
+Resolved IP        : 192.124.249.170
+Command Executed   : ping -n 4 bitmesra.ac.in
+
+TERMINAL OUTPUT:
+Pinging bitmesra.ac.in [192.124.249.170] with 32 bytes of data:
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Request timed out.
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 3
+- Packet Loss Rate   : 25% (1 probe dropped by perimeter firewall/rate-limiter)
+- Minimum RTT        : 150 ms
+- Maximum RTT        : 150 ms
+- Average RTT        : 150 ms
+================================================================================
+

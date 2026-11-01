@@ -1,0 +1,89 @@
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 4: TRACEROUTE HOP-BY-HOP ROUTE PATH ANALYSIS
+================================================================================
+
+4.1 TRACE ROUTE TO GOOGLE.COM
+------------------------------
+Command Executed:
+`tracert -d -h 10 google.com`
+
+Terminal Output:
+Tracing route to google.com [142.250.143.138] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    38 ms    38 ms   49.44.59.153     (National Backbone Core Network)
+    5   37 ms    38 ms    37 ms   49.44.59.153     (Backbone Transit Router)
+    6   36 ms    48 ms    36 ms   72.14.243.188    (Google Autonomous System AS15169 Peering Point)
+    7   38 ms    37 ms    38 ms   142.250.143.138  (Target Google Web Server)
+
+Trace complete. Total hops: 7.
+
+
+4.2 TRACE ROUTE TO FACEBOOK.COM
+--------------------------------
+Command Executed:
+`tracert -d -h 10 facebook.com`
+
+Terminal Output:
+Tracing route to facebook.com [57.144.56.1] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    38 ms   112 ms   49.44.59.153     (National Backbone Core Network)
+    5  100 ms    37 ms    37 ms   49.44.59.153     (Backbone Transit Router)
+    6   56 ms    56 ms    56 ms   172.31.2.63      (Meta Edge Gateway Interconnect)
+    7   60 ms    60 ms    60 ms   157.240.66.228   (Meta AS32934 Backbone Node)
+    8   63 ms    63 ms    63 ms   129.134.42.112   (Meta Infrastructure Router)
+    9   59 ms    59 ms    60 ms   129.134.118.12   (Meta Edge Cluster Router)
+   10    *        *        *      Request timed out (Firewall blocking ICMP Echo at final edge)
+
+Trace complete. Total hops: 9 active intermediate hops before destination firewall.
+
+
+4.3 TRACE ROUTE TO BITMESRA.AC.IN
+----------------------------------
+Command Executed:
+`tracert -d -h 10 bitmesra.ac.in`
+
+Terminal Output:
+Tracing route to bitmesra.ac.in [192.124.249.170] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    37 ms    37 ms   49.44.59.153     (National Backbone Core Network)
+    5   37 ms    37 ms    37 ms   49.44.59.153     (National Backbone Core Router)
+    6   38 ms    38 ms    37 ms   49.45.4.253      (Carrier Exchange Gateway)
+    7  148 ms   149 ms   149 ms   103.198.140.215  (International / Upstream Peering Link)
+    8  150 ms   149 ms   150 ms   62.115.155.138   (Arelion / Telia Global Carrier Transit)
+    9  179 ms   178 ms   178 ms   62.115.124.54    (Sucuri Cloud Security Transit Router)
+   10  161 ms   161 ms   160 ms   62.115.118.59    (Sucuri Anycast Web Security Gateway)
+
+Trace complete.
+
+
+4.4 OBSERVATIONS AND ROUTE COMPARISON
+--------------------------------------
+1. Common Local Path:
+   All three routes traverse the exact same initial 3 hops:
+   - Hop 1: Local Default Gateway (`172.16.8.1`) - latency < 1ms.
+   - Hop 2: Campus Core / Aggregation Switch (`172.16.13.1`) - latency < 1ms.
+   - Hop 3: ISP Border Router (`136.232.33.117`) - latency ~3ms.
+
+2. Divergence:
+   - Google traffic quickly routes into Google's direct peering edge (`72.14.243.188`) at Hop 6.
+   - Facebook routes into Meta's autonomous system (`157.240.66.228`) at Hop 7.
+   - BIT Mesra's site is protected by Sucuri Cloud WAF Anycast nodes, routing through international 
+     transit carrier Arelion/Telia (`62.115.x.x`), increasing latency to ~160ms.
+================================================================================
+

@@ -1,0 +1,23 @@
+================================================================================
+IT302 DCCN LAB - QUESTION 3.1: PING STATISTICS FOR GOOGLE.COM
+================================================================================
+Target URL         : google.com
+Resolved IP        : 142.250.143.138
+Command Executed   : ping -n 4 google.com
+
+TERMINAL OUTPUT:
+Pinging google.com [142.250.143.138] with 32 bytes of data:
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 4
+- Packet Loss Rate   : 0% (Success)
+- Minimum RTT        : 38 ms
+- Maximum RTT        : 38 ms
+- Average RTT        : 38 ms
+================================================================================
+
