@@ -1,9 +1,9 @@
 # IT302 - Data Communication and Computer Networks (DCCN) Lab Assignment
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Portal-38bdf8?style=for-the-badge&logo=github&logoColor=white)](https://aryan9891.github.io/DCCN-Lab-repo/index.html)
-[![Repo](https://img.shields.io/badge/GitHub-Repository-1e293b?style=for-the-badge&logo=github)](https://github.com/Aryan9891/DCCN-Lab-repo)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Portal-38bdf8?style=for-the-badge&logo=github&logoColor=white)](https://aditya-kumar-yadav.github.io/DCCN/)
+[![Repo](https://img.shields.io/badge/GitHub-Repository-1e293b?style=for-the-badge&logo=github)](https://github.com/Aditya-kumar-yadav/DCCN)
 
-🌐 **Live Deployed Web Portal**: **[https://aryan9891.github.io/DCCN-Lab-repo/](https://aryan9891.github.io/DCCN-Lab-repo/)**
+🌐 **Live Deployed Web Portal**: **[https://aditya-kumar-yadav.github.io/DCCN/](https://aditya-kumar-yadav.github.io/DCCN/)**
 
 > ⚡ **1-Click Copy All**: Open the web portal and click **⚡ ONE-CLICK COPY ALL (Q1–Q15)** to copy all 15 experiments, problem statements, and complete C solutions directly into your clipboard in 1 click! Individual question copy buttons (Q1 to Q15) are also provided.
 
