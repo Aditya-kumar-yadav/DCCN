@@ -11,3 +11,7 @@ downloaded_page.html
 Thumbs.db
 .DS_Store
 
+
+# Python cache
+__pycache__/
+*.pyc

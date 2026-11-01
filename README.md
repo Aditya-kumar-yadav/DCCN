@@ -1,9 +1,16 @@
 # IT302 - Data Communication and Computer Networks (DCCN) Lab Assignment
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Portal-38bdf8?style=for-the-badge&logo=github&logoColor=white)](https://aryan9891.github.io/DCCN-Lab-repo/index.html)
+[![Quiz Mode](https://img.shields.io/badge/Quiz%20Mode-1--Click%20Copy%20All-10b981?style=for-the-badge&logo=speedtest&logoColor=white)](https://aryan9891.github.io/DCCN-Lab-repo/quiz.html)
+[![All Solutions](https://img.shields.io/badge/All%20Solutions-Plain%20Text%20File-fbbf24?style=for-the-badge&logo=readme&logoColor=black)](all_solutions.txt)
 [![Repo](https://img.shields.io/badge/GitHub-Repository-1e293b?style=for-the-badge&logo=github)](https://github.com/Aryan9891/DCCN-Lab-repo)
 
-🌐 **Live Deployed Web Portal**: **[https://aryan9891.github.io/DCCN-Lab-repo/index.html](https://aryan9891.github.io/DCCN-Lab-repo/index.html)**
+⚡ **Lab Quiz Rapid Copy Shortcuts**:
+- 🌐 **Full Interactive Lab Portal**: **[https://aryan9891.github.io/DCCN-Lab-repo/](https://aryan9891.github.io/DCCN-Lab-repo/)**
+- ⚡ **Dedicated Quiz Cheat Sheet & 1-Click Copy**: **[https://aryan9891.github.io/DCCN-Lab-repo/quiz.html](https://aryan9891.github.io/DCCN-Lab-repo/quiz.html)**
+- 📄 **Consolidated Plain Text Manual**: **[ll_solutions.txt](all_solutions.txt)** (Download or open in Notepad during quiz)
+
+> 💡 **Quiz Tip**: On either web page, click the prominent green button **⚡ ONE-CLICK COPY ALL (Q1–Q15)** to instantly copy all 15 assignments, problem statements, and complete compilable C solutions directly into your clipboard in 1 click! Individual question copy buttons (Q1 to Q15) are also provided.
 
 This repository contains short, crisp C implementations for all practical coding problems and text documentation for all theoretical/empirical questions from the **IT302 DCCN Lab Assignment** (`IT302 DCCNLAB ASSIGNMENT.pdf`).
 

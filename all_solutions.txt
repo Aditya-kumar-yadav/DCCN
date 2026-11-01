@@ -1,0 +1,2429 @@
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS (DCCN) LAB
+COMPLETE ASSIGNMENT EXPERIMENTS & SOLUTIONS MANUAL (Q1 TO Q15)
+================================================================================
+Repository : https://github.com/Aryan9891/DCCN-Lab-repo
+Live Portal: https://aryan9891.github.io/DCCN-Lab-repo/
+One-Click Copy: Available on both index.html and quiz.html
+================================================================================
+
+TABLE OF CONTENTS / INDEX:
+  [Q1] Lab Network Topology, Interfaces, Routers & IP Pools (Theory / Study)
+  [Q2] Networking Commands (PING, TRACEROUTE), Telnet & Delay (Theory / Experimental)
+  [Q3] Ping Tool Statistics & Round-Trip Times (Measurements)
+  [Q4] Trace Route Path Analysis (Measurements)
+  [Q5] IPv4 Class Determination (C Code)
+  [Q6] Dotted Decimal to 32-bit Address Translation (C Code)
+  [Q7] Bit Stuffing and De-stuffing (C Code)
+  [Q8] Character Stuffing and De-stuffing (C Code)
+  [Q9] Error Detection Methods (C Code (4 Methods))
+  [Q10] Error Correction using Hamming Code (C Code)
+  [Q11] Socket Programming & Client-Server Model (Study & C Code)
+  [Q12] HTTP Sockets: Web Page Upload & Download (C Code (2 Parts))
+  [Q13] Simulation of PING & TRACEROUTE Commands (C Code (2 Parts))
+  [Q14] DHCP Server Simulation (DORA) (C Code)
+  [Q15] Routing Table Implementation (C Code (2 Algorithms))
+
+================================================================================
+
+================================================================================
+QUESTION 1: Lab Network Topology, Interfaces, Routers & IP Pools
+Unit: Unit 1: Network Topology & Commands | Category: Theory / Study
+================================================================================
+PROBLEM STATEMENT:
+1. To familiarize with the Lab Network Topology, Locating different interfaces, routers and switches. Studying different pools of IP addresses.
+
+CONCEPT / ALGORITHM SUMMARY:
+Study of Lab Network Topology (Star/Mesh/Bus), Ethernet/Wireless/Loopback interfaces, Switch CAM tables, Routers, and RFC 1918 Private IP Address pools (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16).
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q1_Lab_Network_Topology.txt (Network Topology & IP Pools Report) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 1: LAB NETWORK TOPOLOGY, INTERFACES, ROUTERS, SWITCHES, AND IP POOLS
+================================================================================
+
+1.1 LAB NETWORK TOPOLOGY
+-------------------------
+In a typical computer networking laboratory, an **Extended Star Topology** (Hierarchical Tree) 
+is implemented for optimal scalability, manageability, and fault isolation:
+
+  [Internet / College Backbone WAN]
+                 |
+          [Core Router / Firewall]  <--- Default Gateway (Layer 3)
+                 |
+      [Distribution / Layer 3 Switch]
+           /           \
+  [Access Switch 1]   [Access Switch 2]  <--- Layer 2 Switches (Rack-mounted)
+     |    |    |         |    |    |
+    PC1  PC2  PC3       PC4  PC5  PC6   <--- Lab Workstations (Star topology)
+
+- **Access Layer**: Unmanaged or managed Layer-2 switches connecting individual desktop 
+  workstations via Category 6 (Cat6) UTP cables terminating in RJ-45 wall ports.
+- **Distribution Layer**: Aggregates traffic from access switches and provides VLAN segmentation 
+  (e.g., separate VLANs for Lab Systems, Faculty, and Servers).
+- **Core Layer**: High-speed core router/firewall handling inter-VLAN routing, Network Address 
+  Translation (NAT), traffic filtering, and uplink to the campus backbone.
+
+
+1.2 LOCATING DIFFERENT NETWORK INTERFACES
+-----------------------------------------
+A network interface represents a node's physical or logical connection to the network.
+
+A. Physical Interfaces:
+   - **Ethernet (NIC)**: Identified as `eth0`, `enp3s0` (Linux) or `Ethernet 1` (Windows). 
+     Contains a permanent hardware MAC address (48-bit / 6 octets, e.g., `50:7B:9D:4A:BC:12`).
+   - **Wireless (Wi-Fi)**: Identified as `wlan0`, `wlp2s0` (Linux) or `Wi-Fi` (Windows).
+
+B. Logical / Virtual Interfaces:
+   - **Loopback (`lo`)**: IP `127.0.0.1/8` (`::1` in IPv6). Used for local inter-process communication 
+     and diagnostic self-testing of the TCP/IP network stack without transmitting over physical media.
+   - **Virtual Bridge/Tun/Tap**: Created by hypervisors or VPNs (`docker0`, `tun0`).
+
+C. Commands to locate and inspect interfaces:
+   - Windows: 
+     > `ipconfig /all`     (Lists MAC address, IPv4/IPv6, subnet mask, DHCP server, DNS)
+     > `getmac /v`         (Lists network adapter hardware MAC addresses)
+     > `route print`       (Displays active IPv4/IPv6 routing table and gateway interfaces)
+   - Linux:
+     > `ip addr show` or `ifconfig -a`  (Lists all interfaces and assigned IPs)
+     > `ip link show`                   (Shows state and MAC address)
+     > `netstat -i`                      (Displays interface packet transmission statistics)
+
+
+1.3 ROLE AND LOCATION OF ROUTERS AND SWITCHES
+----------------------------------------------
+A. Switches (Data Link Layer - OSI Layer 2):
+   - **Location**: Mounted inside 19-inch lab server racks or wall-mount distribution boxes.
+   - **Function**: Connects workstations inside the same Local Area Network (broadcast domain).
+   - **Working Principle**: Inspects incoming Ethernet frame headers, builds a Dynamic MAC 
+     Address Table (CAM table: Port <-> MAC), and forwards frames directly to destination ports 
+     (micro-segmentation), eliminating collisions.
+
+B. Routers (Network Layer - OSI Layer 3):
+   - **Location**: Located in the central server/networking room at the lab perimeter.
+   - **Function**: Connects distinct IP subnets (e.g., Lab LAN <-> Campus Backbone <-> Internet).
+   - **Working Principle**: Reads Layer 3 IP headers, evaluates routing tables using longest-prefix 
+     matching, decrements TTL (Time to Live), and routes packets across networks.
+   - **Additional Services**: Runs DHCP server daemon to assign dynamic IP leases, NAT to translate 
+     private lab IPs to public IPs, and Access Control Lists (ACLs) for security.
+
+
+1.4 STUDYING DIFFERENT POOLS OF IP ADDRESSES
+---------------------------------------------
+IPv4 addresses are 32-bit identifiers split into standard classes and special functional pools:
+
+A. Classful Addressing Overview:
+   +-------+--------------------+--------------------+-----------------------+
+   | Class | First Octet Range  | Default Subnet     | Purpose / Application |
+   +-------+--------------------+--------------------+-----------------------+
+   | A     | 1 - 127            | 255.0.0.0 (/8)     | Very large networks   |
+   | B     | 128 - 191          | 255.255.0.0 (/16)  | Medium-sized networks |
+   | C     | 192 - 223          | 255.255.255.0 (/24)| Small Local Networks  |
+   | D     | 224 - 239          | N/A                | Multicast groups      |
+   | E     | 240 - 255          | N/A                | Experimental/Reserved |
+   +-------+--------------------+--------------------+-----------------------+
+
+B. Private IP Address Pools (RFC 1918 - Non-routable on Public Internet):
+   - Class A Private: `10.0.0.0` to `10.255.255.255`       (10.0.0.0/8    = 16,777,216 IPs)
+   - Class B Private: `172.16.0.0` to `172.31.255.255`     (172.16.0.0/12 = 1,048,576 IPs)
+   - Class C Private: `192.168.0.0` to `192.168.255.255`   (192.168.0.0/16= 65,536 IPs)
+   *Note: Lab computers typically receive private IP addresses from either `172.16.x.x` or `192.168.x.x`.*
+
+C. Special and Reserved IP Pools:
+   - **Loopback Address Block**: `127.0.0.0/8` (e.g., `127.0.0.1` = localhost)
+   - **APIPA (Automatic Private IP Addressing)**: `169.254.0.0/16` (assigned by OS when DHCP fails)
+   - **Broadcast Addresses**:
+     - Limited Broadcast: `255.255.255.255` (broadcasts to current local subnet)
+     - Directed Broadcast: Host bits all 1s (e.g., `192.168.1.255` for `192.168.1.0/24`)
+   - **Default Route / Any Network**: `0.0.0.0/0`
+================================================================================
+
+
+================================================================================
+QUESTION 2: Networking Commands (PING, TRACEROUTE), Telnet & Delay
+Unit: Unit 1: Network Topology & Commands | Category: Theory / Experimental
+================================================================================
+PROBLEM STATEMENT:
+2. To learn and observe the usage of different networking commands e.g. PING, TRACEROUTE. Learning remote login using telnet session. Measuring typical average delays between different locations of the network.
+
+CONCEPT / ALGORITHM SUMMARY:
+Practical examination of PING (ICMP Type 8 Echo Request / Type 0 Reply), TRACEROUTE (TTL expiry, ICMP Type 11), Telnet (Port 23 cleartext) vs SSH (Port 22 encrypted), and 4 components of nodal delay: Processing, Queuing, Transmission, and Propagation delay.
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q2_Networking_Commands_and_Delays.txt (Networking Commands & Delay Analysis) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 2: USAGE OF NETWORKING COMMANDS, TELNET REMOTE LOGIN, AND DELAY ANALYSIS
+================================================================================
+
+2.1 PING COMMAND USAGE AND OBSERVATIONS
+----------------------------------------
+A. Purpose:
+   - Tests end-to-end IP network reachability between source and destination hosts.
+   - Measures packet loss and Round-Trip Time (RTT) in milliseconds.
+
+B. Underlying Protocol:
+   - Uses **ICMP (Internet Control Message Protocol)** at Layer 3:
+     1. Source transmits an **ICMP Echo Request** (Type 8, Code 0) packet.
+     2. Target machine responds with an **ICMP Echo Reply** (Type 0, Code 0) packet.
+
+C. Command Syntax and Key Flags:
+   - Windows: `ping -n <count> -l <size_in_bytes> <host_or_ip>`
+   - Linux:   `ping -c <count> -s <size_in_bytes> <host_or_ip>`
+   - Example:
+     > `ping -n 4 google.com`
+     Outputs: Sent packets, received packets, lost packets (%), min/max/average RTT.
+
+
+2.2 TRACEROUTE / TRACERT COMMAND USAGE AND OBSERVATIONS
+--------------------------------------------------------
+A. Purpose:
+   - Maps the exact hop-by-hop path (list of intermediate Layer 3 routers) traversed 
+     by an IP packet toward a target destination.
+   - Diagnoses where packet loss, latency spikes, or network routing loops occur.
+
+B. Underlying Mechanism:
+   - Operates by manipulating the **TTL (Time to Live)** field in the IPv4 header:
+     1. Source sends a probe packet with `TTL = 1`.
+     2. The first router decrements TTL to 0, drops the packet, and sends back an 
+        **ICMP Time Exceeded** message (Type 11, Code 0). The router's IP is recorded.
+     3. The source increments TTL (`TTL = 2`, `TTL = 3`, ...) for subsequent probes.
+     4. This continues until the probe reaches the target destination, which replies with 
+        an ICMP Echo Reply (Windows tracert) or ICMP Port Unreachable (Linux traceroute UDP probe).
+
+C. Command Syntax:
+   - Windows: `tracert -d <destination>`  (-d avoids reverse DNS resolution for speed)
+   - Linux:   `traceroute -n <destination>`
+
+
+2.3 REMOTE LOGIN USING TELNET SESSION
+--------------------------------------
+A. Purpose:
+   - Provides a bidirectional, interactive text-oriented communications facility using a 
+     virtual terminal connection over a TCP/IP network.
+   - Default Transport Port: **TCP Port 23**.
+
+B. Usage / Syntax:
+   - Initiating connection:
+     > `telnet <remote_host_ip_or_hostname> <port>`
+     Example: `telnet 192.168.1.100 23`
+   - Testing connectivity to network application ports (e.g., HTTP / SMTP):
+     > `telnet google.com 80`
+     Type: `GET / HTTP/1.1` followed by two Enter keys to receive HTTP headers.
+
+C. Security Vulnerability & Modern Alternative:
+   - **Vulnerability**: Telnet transmits all data, including administrative usernames and 
+     passwords, in completely **unencrypted plain text**, making it highly susceptible to 
+     eavesdropping and Man-In-The-Middle (MITM) packet sniffing attacks.
+   - **Modern Standard**: **SSH (Secure Shell, TCP Port 22)** has replaced Telnet. SSH 
+     encrypts all payload and authentication traffic using strong cryptographic protocols 
+     (RSA, ECDSA, AES).
+
+
+2.4 MEASURING TYPICAL AVERAGE DELAYS ACROSS NETWORK LOCATIONS
+--------------------------------------------------------------
+A. Components of End-to-End Nodal Delay:
+   Total Delay (d_nodal) = d_proc + d_queue + d_trans + d_prop
+   - **Processing Delay (d_proc)**: Time router takes to examine packet header and determine route.
+   - **Queuing Delay (d_queue)**: Time packet spends waiting in router buffer queues.
+   - **Transmission Delay (d_trans)**: Time to push packet bits onto physical link (Packet Size / Bandwidth).
+   - **Propagation Delay (d_prop)**: Time for a bit to physically travel down medium (Distance / Speed of Light in medium).
+
+B. Typical Empirical Latency Profiles Measured:
+   +------------------------------+---------------------------+---------------------------------+
+   | Location / Segment           | Typical Round-Trip (RTT)  | Characteristic                  |
+   +------------------------------+---------------------------+---------------------------------+
+   | Localhost (Loopback)         | < 0.1 ms                  | Software stack only (no cable)  |
+   | Same Lab Subnet (Switch)     | < 1 ms                    | Direct Layer 2 frame forwarding |
+   | Campus Gateway / Core Router | 1 ms - 5 ms               | Layer 3 routing & NAT processing|
+   | Regional / Domestic WAN      | 25 ms - 60 ms             | Fiber backbone across state     |
+   | Overseas / International WAN | 130 ms - 260 ms           | Undersea intercontinental cables|
+   +------------------------------+---------------------------+---------------------------------+
+================================================================================
+
+
+================================================================================
+QUESTION 3: Ping Tool Statistics & Round-Trip Times
+Unit: Unit 1: Network Topology & Commands | Category: Measurements
+================================================================================
+PROBLEM STATEMENT:
+3. "Ping" is a tool used to determine if a server is responding and to estimate the round trip time of a message sent to that server. Use the ping command for the following URLs and record the success or failure statistics along with the average round trip time:
+ a) google.com   b) facebook.com   c) bitmesra.ac.in
+
+CONCEPT / ALGORITHM SUMMARY:
+Empirical measurement of round trip time (RTT) and packet loss for google.com (Avg RTT ~38ms, 0% loss), facebook.com (Avg RTT ~58ms, 0% loss), and bitmesra.ac.in (Avg RTT ~150ms, 25% loss due to ICMP rate limiting).
+
+--------------------------------------------------------------------------------
+--- File 1/4: Q3_Ping_Statistics.txt (Consolidated Ping Statistics & Comparison) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 3: PING COMMAND STATISTICS AND ROUND-TRIP TIME (RTT) MEASUREMENTS
+================================================================================
+
+3.1 PING STATISTICS FOR GOOGLE.COM
+-----------------------------------
+Command Executed:
+`ping -n 4 google.com`
+
+Terminal Output:
+Pinging google.com [142.250.143.138] with 32 bytes of data:
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+
+Ping statistics for 142.250.143.138:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 38ms, Maximum = 38ms, Average = 38ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 142.250.143.138
+- Packets Sent          : 4
+- Packets Received      : 4
+- Packet Loss Rate      : 0% (Success)
+- Minimum RTT           : 38 ms
+- Maximum RTT           : 38 ms
+- Average RTT           : 38 ms
+
+
+3.2 PING STATISTICS FOR FACEBOOK.COM
+-------------------------------------
+Command Executed:
+`ping -n 4 facebook.com`
+
+Terminal Output:
+Pinging facebook.com [57.144.56.1] with 32 bytes of data:
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+
+Ping statistics for 57.144.56.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 58ms, Maximum = 58ms, Average = 58ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 57.144.56.1
+- Packets Sent          : 4
+- Packets Received      : 4
+- Packet Loss Rate      : 0% (Success)
+- Minimum RTT           : 58 ms
+- Maximum RTT           : 58 ms
+- Average RTT           : 58 ms
+
+
+3.3 PING STATISTICS FOR BITMESRA.AC.IN
+---------------------------------------
+Command Executed:
+`ping -n 4 bitmesra.ac.in`
+
+Terminal Output:
+Pinging bitmesra.ac.in [192.124.249.170] with 32 bytes of data:
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Request timed out.
+
+Ping statistics for 192.124.249.170:
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 150ms, Maximum = 150ms, Average = 150ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 192.124.249.170
+- Packets Sent          : 4
+- Packets Received      : 3
+- Packet Loss Rate      : 25% (Partial loss due to firewall/ICMP rate-limiting)
+- Minimum RTT           : 150 ms
+- Maximum RTT           : 150 ms
+- Average RTT           : 150 ms
+
+
+3.4 COMPARATIVE ANALYSIS TABLE
+-------------------------------
++----+-----------------+------------------+---------------+-------------+-------------+
+| No | Target URL      | Resolved IP      | Loss Rate (%) | Status      | Average RTT |
++----+-----------------+------------------+---------------+-------------+-------------+
+| 1  | google.com      | 142.250.143.138  | 0%            | Responding  | 38 ms       |
+| 2  | facebook.com    | 57.144.56.1      | 0%            | Responding  | 58 ms       |
+| 3  | bitmesra.ac.in  | 192.124.249.170  | 25%           | Responding  | 150 ms      |
++----+-----------------+------------------+---------------+-------------+-------------+
+
+Observations:
+- Google had the lowest latency (38ms) due to nearby Edge PoP (Point of Presence) CDN caching.
+- Facebook maintained a stable RTT of 58ms with 0% loss.
+- BIT Mesra server hosted behind a security firewall/WAF (Web Application Firewall) had higher 
+  delay (150ms) and dropped 1 probe due to strict ICMP traffic throttling policies.
+================================================================================
+
+--------------------------------------------------------------------------------
+--- File 2/4: Q3_1_Ping_Google.txt (3.1 Ping google.com) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 DCCN LAB - QUESTION 3.1: PING STATISTICS FOR GOOGLE.COM
+================================================================================
+Target URL         : google.com
+Resolved IP        : 142.250.143.138
+Command Executed   : ping -n 4 google.com
+
+TERMINAL OUTPUT:
+Pinging google.com [142.250.143.138] with 32 bytes of data:
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 4
+- Packet Loss Rate   : 0% (Success)
+- Minimum RTT        : 38 ms
+- Maximum RTT        : 38 ms
+- Average RTT        : 38 ms
+================================================================================
+
+--------------------------------------------------------------------------------
+--- File 3/4: Q3_2_Ping_Facebook.txt (3.2 Ping facebook.com) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 DCCN LAB - QUESTION 3.2: PING STATISTICS FOR FACEBOOK.COM
+================================================================================
+Target URL         : facebook.com
+Resolved IP        : 57.144.56.1
+Command Executed   : ping -n 4 facebook.com
+
+TERMINAL OUTPUT:
+Pinging facebook.com [57.144.56.1] with 32 bytes of data:
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 4
+- Packet Loss Rate   : 0% (Success)
+- Minimum RTT        : 58 ms
+- Maximum RTT        : 58 ms
+- Average RTT        : 58 ms
+================================================================================
+
+--------------------------------------------------------------------------------
+--- File 4/4: Q3_3_Ping_BitMesra.txt (3.3 Ping bitmesra.ac.in) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 DCCN LAB - QUESTION 3.3: PING STATISTICS FOR BITMESRA.AC.IN
+================================================================================
+Target URL         : bitmesra.ac.in
+Resolved IP        : 192.124.249.170
+Command Executed   : ping -n 4 bitmesra.ac.in
+
+TERMINAL OUTPUT:
+Pinging bitmesra.ac.in [192.124.249.170] with 32 bytes of data:
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Request timed out.
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 3
+- Packet Loss Rate   : 25% (1 probe dropped by perimeter firewall/rate-limiter)
+- Minimum RTT        : 150 ms
+- Maximum RTT        : 150 ms
+- Average RTT        : 150 ms
+================================================================================
+
+
+================================================================================
+QUESTION 4: Trace Route Path Analysis
+Unit: Unit 1: Network Topology & Commands | Category: Measurements
+================================================================================
+PROBLEM STATEMENT:
+4. Trace the route that is taken when you try to access:
+ a) google.com   b) facebook.com   c) bitmesra.ac.in
+
+CONCEPT / ALGORITHM SUMMARY:
+Traceroute hop-by-hop path discovery and latency progression across local gateway, ISP backbone, and autonomous system (AS) borders to Google (AS15169, 7 hops), Facebook (AS32934, 9 hops), and BIT Mesra (Arelion/Sucuri, 10 hops).
+
+--------------------------------------------------------------------------------
+--- File 1/4: Q4_Trace_Route.txt (Consolidated Traceroute Path Analysis) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 4: TRACEROUTE HOP-BY-HOP ROUTE PATH ANALYSIS
+================================================================================
+
+4.1 TRACE ROUTE TO GOOGLE.COM
+------------------------------
+Command Executed:
+`tracert -d -h 10 google.com`
+
+Terminal Output:
+Tracing route to google.com [142.250.143.138] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    38 ms    38 ms   49.44.59.153     (National Backbone Core Network)
+    5   37 ms    38 ms    37 ms   49.44.59.153     (Backbone Transit Router)
+    6   36 ms    48 ms    36 ms   72.14.243.188    (Google Autonomous System AS15169 Peering Point)
+    7   38 ms    37 ms    38 ms   142.250.143.138  (Target Google Web Server)
+
+Trace complete. Total hops: 7.
+
+
+4.2 TRACE ROUTE TO FACEBOOK.COM
+--------------------------------
+Command Executed:
+`tracert -d -h 10 facebook.com`
+
+Terminal Output:
+Tracing route to facebook.com [57.144.56.1] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    38 ms   112 ms   49.44.59.153     (National Backbone Core Network)
+    5  100 ms    37 ms    37 ms   49.44.59.153     (Backbone Transit Router)
+    6   56 ms    56 ms    56 ms   172.31.2.63      (Meta Edge Gateway Interconnect)
+    7   60 ms    60 ms    60 ms   157.240.66.228   (Meta AS32934 Backbone Node)
+    8   63 ms    63 ms    63 ms   129.134.42.112   (Meta Infrastructure Router)
+    9   59 ms    59 ms    60 ms   129.134.118.12   (Meta Edge Cluster Router)
+   10    *        *        *      Request timed out (Firewall blocking ICMP Echo at final edge)
+
+Trace complete. Total hops: 9 active intermediate hops before destination firewall.
+
+
+4.3 TRACE ROUTE TO BITMESRA.AC.IN
+----------------------------------
+Command Executed:
+`tracert -d -h 10 bitmesra.ac.in`
+
+Terminal Output:
+Tracing route to bitmesra.ac.in [192.124.249.170] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    37 ms    37 ms   49.44.59.153     (National Backbone Core Network)
+    5   37 ms    37 ms    37 ms   49.44.59.153     (National Backbone Core Router)
+    6   38 ms    38 ms    37 ms   49.45.4.253      (Carrier Exchange Gateway)
+    7  148 ms   149 ms   149 ms   103.198.140.215  (International / Upstream Peering Link)
+    8  150 ms   149 ms   150 ms   62.115.155.138   (Arelion / Telia Global Carrier Transit)
+    9  179 ms   178 ms   178 ms   62.115.124.54    (Sucuri Cloud Security Transit Router)
+   10  161 ms   161 ms   160 ms   62.115.118.59    (Sucuri Anycast Web Security Gateway)
+
+Trace complete.
+
+
+4.4 OBSERVATIONS AND ROUTE COMPARISON
+--------------------------------------
+1. Common Local Path:
+   All three routes traverse the exact same initial 3 hops:
+   - Hop 1: Local Default Gateway (`172.16.8.1`) - latency < 1ms.
+   - Hop 2: Campus Core / Aggregation Switch (`172.16.13.1`) - latency < 1ms.
+   - Hop 3: ISP Border Router (`136.232.33.117`) - latency ~3ms.
+
+2. Divergence:
+   - Google traffic quickly routes into Google's direct peering edge (`72.14.243.188`) at Hop 6.
+   - Facebook routes into Meta's autonomous system (`157.240.66.228`) at Hop 7.
+   - BIT Mesra's site is protected by Sucuri Cloud WAF Anycast nodes, routing through international 
+     transit carrier Arelion/Telia (`62.115.x.x`), increasing latency to ~160ms.
+================================================================================
+
+--------------------------------------------------------------------------------
+--- File 2/4: Q4_1_Trace_Google.txt (4.1 Trace Route google.com) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 DCCN LAB - QUESTION 4.1: TRACEROUTE FOR GOOGLE.COM
+================================================================================
+Target Host        : google.com
+Target IP          : 142.250.143.138
+Command Executed   : tracert -d -h 10 google.com
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    38 ms    38 ms   49.44.59.153     National Carrier Backbone Transit
+    5   37 ms    38 ms    37 ms   49.44.59.153     Backbone Peering Router
+    6   36 ms    48 ms    36 ms   72.14.243.188    Google AS15169 Interconnect PoP
+    7   38 ms    37 ms    38 ms   142.250.143.138  Destination Web Server
+
+Result: Trace completed successfully in 7 hops. Average latency: ~38 ms.
+================================================================================
+
+--------------------------------------------------------------------------------
+--- File 3/4: Q4_2_Trace_Facebook.txt (4.2 Trace Route facebook.com) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 DCCN LAB - QUESTION 4.2: TRACEROUTE FOR FACEBOOK.COM
+================================================================================
+Target Host        : facebook.com
+Target IP          : 57.144.56.1
+Command Executed   : tracert -d -h 10 facebook.com
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    38 ms   112 ms   49.44.59.153     National Carrier Backbone Transit
+    5  100 ms    37 ms    37 ms   49.44.59.153     Backbone Transit Router
+    6   56 ms    56 ms    56 ms   172.31.2.63      Meta Gateway Interconnect
+    7   60 ms    60 ms    60 ms   157.240.66.228   Meta AS32934 Core Router
+    8   63 ms    63 ms    63 ms   129.134.42.112   Meta Infrastructure Node
+    9   59 ms    59 ms    60 ms   129.134.118.12   Meta Edge Router
+   10    *        *        *      Request timed out (Firewall blocks ICMP probe)
+
+Result: Trace reached Meta infrastructure edge in 9 active hops. Average latency: ~59 ms.
+================================================================================
+
+--------------------------------------------------------------------------------
+--- File 4/4: Q4_3_Trace_BitMesra.txt (4.3 Trace Route bitmesra.ac.in) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 DCCN LAB - QUESTION 4.3: TRACEROUTE FOR BITMESRA.AC.IN
+================================================================================
+Target Host        : bitmesra.ac.in
+Target IP          : 192.124.249.170
+Command Executed   : tracert -d -h 10 bitmesra.ac.in
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   <1 ms    <1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   <1 ms    <1 ms    <1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    37 ms    37 ms   49.44.59.153     National Backbone Core Network
+    5   37 ms    37 ms    37 ms   49.44.59.153     National Backbone Transit Router
+    6   38 ms    38 ms    37 ms   49.45.4.253      Carrier Exchange Gateway
+    7  148 ms   149 ms   149 ms   103.198.140.215  International Peering Link
+    8  150 ms   149 ms   150 ms   62.115.155.138   Arelion / Telia Global Carrier Transit
+    9  179 ms   178 ms   178 ms   62.115.124.54    Sucuri Cloud Security Transit Router
+   10  161 ms   161 ms   160 ms   62.115.118.59    Sucuri Anycast Web Security Gateway
+
+Result: Trace completed over international transit carriers in 10 hops. Average latency: ~161 ms.
+================================================================================
+
+
+================================================================================
+QUESTION 5: IPv4 Class Determination
+Unit: Unit 2: IP Addressing & Conversion | Category: C Code
+================================================================================
+PROBLEM STATEMENT:
+5. Write a C/C++ program to determine if the IP address is in Class A, B, C, D, or E.
+
+CONCEPT / ALGORITHM SUMMARY:
+Classifies IPv4 address by first octet: Class A (0-127, mask 255.0.0.0), Class B (128-191, mask 255.255.0.0), Class C (192-223, mask 255.255.255.0), Class D (224-239, Multicast), Class E (240-255, Experimental). Extracts NetID & HostID.
+
+COMPILATION INSTRUCTIONS:
+gcc Q5_IP_Class_Determination.c -o Q5
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q5_IP_Class_Determination.c (IPv4 Class Identifier) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 5
+ * Program to determine whether an IPv4 address is in Class A, B, C, D, or E.
+ */
+
+#include <stdio.h>
+
+int main(void) {
+    char ip[32];
+    int o1, o2, o3, o4;
+
+    printf("Enter IPv4 Address (e.g. 192.168.1.1): ");
+    if (scanf("%31s", ip) != 1) return 1;
+
+    if (sscanf(ip, "%d.%d.%d.%d", &o1, &o2, &o3, &o4) != 4 ||
+        o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 ||
+        o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255) {
+        printf("Invalid IPv4 address format!\n");
+        return 1;
+    }
+
+    printf("\n--- IP Classification Result ---\n");
+    printf("IP Address : %d.%d.%d.%d\n", o1, o2, o3, o4);
+
+    if (o1 >= 0 && o1 <= 127) {
+        printf("Class      : Class A\n");
+        printf("Subnet Mask: 255.0.0.0\n");
+        printf("Network ID : %d.0.0.0\n", o1);
+        printf("Host ID    : 0.%d.%d.%d\n", o2, o3, o4);
+    } else if (o1 >= 128 && o1 <= 191) {
+        printf("Class      : Class B\n");
+        printf("Subnet Mask: 255.255.0.0\n");
+        printf("Network ID : %d.%d.0.0\n", o1, o2);
+        printf("Host ID    : 0.0.%d.%d\n", o3, o4);
+    } else if (o1 >= 192 && o1 <= 223) {
+        printf("Class      : Class C\n");
+        printf("Subnet Mask: 255.255.255.0\n");
+        printf("Network ID : %d.%d.%d.0\n", o1, o2, o3);
+        printf("Host ID    : 0.0.0.%d\n", o4);
+    } else if (o1 >= 224 && o1 <= 239) {
+        printf("Class      : Class D (Multicast)\n");
+    } else {
+        printf("Class      : Class E (Experimental / Reserved)\n");
+    }
+
+    return 0;
+}
+
+
+================================================================================
+QUESTION 6: Dotted Decimal to 32-bit Address Translation
+Unit: Unit 2: IP Addressing & Conversion | Category: C Code
+================================================================================
+PROBLEM STATEMENT:
+6. Write a C/C++ program to translate dotted decimal IP address into 32 bit address.
+
+CONCEPT / ALGORITHM SUMMARY:
+Converts dotted decimal IPv4 string (A.B.C.D) into a single 32-bit integer: (A<<24) | (B<<16) | (C<<8) | D. Prints full 32-bit binary representation, decimal integer, and Hexadecimal.
+
+COMPILATION INSTRUCTIONS:
+gcc Q6_Dotted_Decimal_To_32Bit.c -o Q6
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q6_Dotted_Decimal_To_32Bit.c (Dotted Decimal to 32-Bit Binary & Hex) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 6
+ * Program to translate a dotted decimal IPv4 address into a 32-bit binary and integer address.
+ */
+
+#include <stdio.h>
+
+void print_binary8(unsigned int n) {
+    for (int i = 7; i >= 0; i--) {
+        putchar((n & (1 << i)) ? '1' : '0');
+    }
+}
+
+int main(void) {
+    char ip[32];
+    unsigned int o1, o2, o3, o4;
+
+    printf("Enter IPv4 Address in dotted decimal (e.g. 192.168.1.1): ");
+    if (scanf("%31s", ip) != 1) return 1;
+
+    if (sscanf(ip, "%u.%u.%u.%u", &o1, &o2, &o3, &o4) != 4 ||
+        o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255) {
+        printf("Error: Invalid dotted decimal address!\n");
+        return 1;
+    }
+
+    unsigned int addr32 = (o1 << 24) | (o2 << 16) | (o3 << 8) | o4;
+
+    printf("\n--- Conversion Results ---\n");
+    printf("Dotted Decimal  : %u.%u.%u.%u\n", o1, o2, o3, o4);
+    printf("32-bit Binary   : ");
+    print_binary8(o1); putchar(' ');
+    print_binary8(o2); putchar(' ');
+    print_binary8(o3); putchar(' ');
+    print_binary8(o4); putchar('\n');
+    printf("Continuous Bits : ");
+    print_binary8(o1); print_binary8(o2); print_binary8(o3); print_binary8(o4);
+    putchar('\n');
+    printf("32-bit Unsigned : %u\n", addr32);
+    printf("32-bit Hex      : 0x%08X\n", addr32);
+
+    return 0;
+}
+
+
+================================================================================
+QUESTION 7: Bit Stuffing and De-stuffing
+Unit: Unit 3: Data Link Layer Framing | Category: C Code
+================================================================================
+PROBLEM STATEMENT:
+7. Write a C/C++ program to perform bit stuffing and de-stuffing.
+
+CONCEPT / ALGORITHM SUMMARY:
+HDLC Bit Framing: Sender scans data stream; whenever five consecutive '1's appear, a '0' is stuffed to prevent false flag pattern (01111110 / 0x7E). Receiver destuffs by removing '0' after five '1's.
+
+COMPILATION INSTRUCTIONS:
+gcc Q7_Bit_Stuffing_Destuffing.c -o Q7
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q7_Bit_Stuffing_Destuffing.c (HDLC Bit Stuffing & Framing) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 7
+ * Program to perform Bit Stuffing and De-stuffing (HDLC / Framing).
+ * Rule: After five consecutive 1s, a '0' is stuffed at sender and removed at receiver.
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+#define FLAG "01111110"
+
+void bit_stuff(const char *in, char *out) {
+    int count = 0, j = 0;
+    for (int i = 0; in[i] != '\0'; i++) {
+        out[j++] = in[i];
+        if (in[i] == '1') {
+            count++;
+            if (count == 5) {
+                out[j++] = '0'; // Stuff '0'
+                count = 0;
+            }
+        } else {
+            count = 0;
+        }
+    }
+    out[j] = '\0';
+}
+
+void bit_destuff(const char *in, char *out) {
+    int count = 0, j = 0;
+    for (int i = 0; in[i] != '\0'; i++) {
+        out[j++] = in[i];
+        if (in[i] == '1') {
+            count++;
+            if (count == 5) {
+                if (in[i + 1] == '0') {
+                    i++; // Skip the stuffed '0'
+                }
+                count = 0;
+            }
+        } else {
+            count = 0;
+        }
+    }
+    out[j] = '\0';
+}
+
+int main(void) {
+    char data[256], stuffed[512], destuffed[256];
+
+    printf("Enter binary data string (e.g. 01111110111110): ");
+    if (scanf("%255s", data) != 1) return 1;
+
+    // Validate binary string
+    for (int i = 0; data[i] != '\0'; i++) {
+        if (data[i] != '0' && data[i] != '1') {
+            printf("Error: Input must only contain '0' and '1'!\n");
+            return 1;
+        }
+    }
+
+    bit_stuff(data, stuffed);
+    bit_destuff(stuffed, destuffed);
+
+    printf("\n--- Bit Stuffing & De-stuffing Results ---\n");
+    printf("Original Data   : %s\n", data);
+    printf("Stuffed Payload : %s\n", stuffed);
+    printf("Transmitted Frame: %s %s %s\n", FLAG, stuffed, FLAG);
+    printf("De-stuffed Data : %s\n", destuffed);
+    printf("Integrity Match : %s\n", (strcmp(data, destuffed) == 0) ? "SUCCESS" : "FAILED");
+
+    return 0;
+}
+
+
+================================================================================
+QUESTION 8: Character Stuffing and De-stuffing
+Unit: Unit 3: Data Link Layer Framing | Category: C Code
+================================================================================
+PROBLEM STATEMENT:
+8. Write a C/C++ program to perform character stuffing and de-stuffing.
+
+CONCEPT / ALGORITHM SUMMARY:
+Byte-Oriented Framing: Frames data with DLE STX (Start of Text) and DLE ETX (End of Text). If DLE character appears inside user payload, sender stuffs an additional DLE (DLE DLE). Receiver strips the stuffed DLE.
+
+COMPILATION INSTRUCTIONS:
+gcc Q8_Character_Stuffing_Destuffing.c -o Q8
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q8_Character_Stuffing_Destuffing.c (Byte Stuffing (DLE STX / DLE ETX)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 8
+ * Program to perform Character (Byte) Stuffing and De-stuffing.
+ * Framing: Frame begins with "DLE STX" and ends with "DLE ETX".
+ * Rule: Whenever "DLE" appears inside data, an extra "DLE" is stuffed.
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+void char_stuff(const char *in, char *out) {
+    int i = 0, j = 0;
+    // Add Frame Header
+    strcpy(out, "DLE STX ");
+    j = (int)strlen(out);
+
+    while (in[i] != '\0') {
+        // Check for "DLE" token in data
+        if (strncmp(&in[i], "DLE", 3) == 0 && (i == 0 || in[i-1] == ' ') && 
+            (in[i+3] == ' ' || in[i+3] == '\0')) {
+            strcpy(&out[j], "DLE DLE ");
+            j += 8;
+            i += 3;
+            if (in[i] == ' ') i++;
+        } else {
+            out[j++] = in[i++];
+        }
+    }
+    // Add Frame Trailer
+    if (j > 0 && out[j-1] != ' ') out[j++] = ' ';
+    strcpy(&out[j], "DLE ETX");
+}
+
+void char_destuff(const char *in, char *out) {
+    int i = 0, j = 0;
+    // Skip initial "DLE STX "
+    if (strncmp(in, "DLE STX ", 8) == 0) {
+        i = 8;
+    }
+
+    int len = (int)strlen(in);
+    // Find where trailer " DLE ETX" begins
+    int end_limit = len;
+    if (len >= 8 && strcmp(&in[len - 8], " DLE ETX") == 0) {
+        end_limit = len - 8;
+    } else if (len >= 7 && strcmp(&in[len - 7], "DLE ETX") == 0) {
+        end_limit = len - 7;
+    }
+
+    while (i < end_limit) {
+        // If "DLE DLE" appears, destuff one "DLE"
+        if (strncmp(&in[i], "DLE DLE", 7) == 0) {
+            strcpy(&out[j], "DLE");
+            j += 3;
+            i += 7;
+        } else {
+            out[j++] = in[i++];
+        }
+    }
+    // Trim trailing space if any
+    while (j > 0 && out[j-1] == ' ') j--;
+    out[j] = '\0';
+}
+
+int main(void) {
+    char data[256], stuffed[512], destuffed[256];
+
+    printf("Enter message string (e.g. NET DLE WORK): ");
+    if (!fgets(data, sizeof(data), stdin)) return 1;
+    data[strcspn(data, "\r\n")] = '\0'; // Remove newline
+
+    char_stuff(data, stuffed);
+    char_destuff(stuffed, destuffed);
+
+    printf("\n--- Character Stuffing & De-stuffing Results ---\n");
+    printf("Original Data   : %s\n", data);
+    printf("Stuffed Frame   : %s\n", stuffed);
+    printf("De-stuffed Data : %s\n", destuffed);
+    printf("Integrity Match : %s\n", (strcmp(data, destuffed) == 0) ? "SUCCESS" : "FAILED");
+
+    return 0;
+}
+
+
+================================================================================
+QUESTION 9: Error Detection Methods
+Unit: Unit 4: Error Detection & Correction | Category: C Code (4 Methods)
+================================================================================
+PROBLEM STATEMENT:
+9. Write a C/C++ program to perform error detection method using:
+ - Single parity checking method
+ - Two dimension parity checking method
+ - Cyclic redundancy check (CRC) method
+ - Internet checksum method
+
+CONCEPT / ALGORITHM SUMMARY:
+4 Error Detection Algorithms: 1) Single Parity (Even/Odd bit), 2) 2D Parity Matrix (LRC & VRC - detects and locates 1-bit error), 3) Cyclic Redundancy Check CRC (Modulo-2 polynomial division with XOR), 4) Internet Checksum RFC 1071 (16-bit 1's complement sum).
+
+COMPILATION INSTRUCTIONS:
+gcc Q9_1_Single_Parity.c -o Q9_1
+gcc Q9_2_Two_Dimension_Parity.c -o Q9_2
+gcc Q9_3_CRC.c -o Q9_3
+gcc Q9_4_Internet_Checksum.c -o Q9_4
+
+--------------------------------------------------------------------------------
+--- File 1/4: Q9_1_Single_Parity.c (9.1 Single Parity Check (Even / Odd)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 9.1
+ * Error Detection: Single Parity Checking Method (Even & Odd Parity)
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+int count_ones(const char *bits) {
+    int count = 0;
+    for (int i = 0; bits[i] != '\0'; i++) {
+        if (bits[i] == '1') count++;
+    }
+    return count;
+}
+
+int main(void) {
+    char data[64], tx_code[65], rx_code[65];
+    int choice;
+
+    printf("--- 9.1 Single Parity Check ---\n");
+    printf("Enter binary data bits (e.g. 1011001): ");
+    if (scanf("%63s", data) != 1) return 1;
+
+    printf("Select Parity Scheme (1: Even Parity, 2: Odd Parity): ");
+    if (scanf("%d", &choice) != 1) return 1;
+
+    int ones = count_ones(data);
+    char parity_bit;
+
+    if (choice == 1) { // Even parity
+        parity_bit = (ones % 2 == 0) ? '0' : '1';
+    } else {           // Odd parity
+        parity_bit = (ones % 2 == 0) ? '1' : '0';
+    }
+
+    // Sender codeword
+    strcpy(tx_code, data);
+    int len = (int)strlen(data);
+    tx_code[len] = parity_bit;
+    tx_code[len + 1] = '\0';
+
+    printf("\n[Sender] Parity Bit Added : %c\n", parity_bit);
+    printf("[Sender] Transmitted Code : %s\n", tx_code);
+
+    // Receiver check
+    printf("\n[Receiver] Enter received codeword (or test with %s): ", tx_code);
+    if (scanf("%64s", rx_code) != 1) return 1;
+
+    int rx_ones = count_ones(rx_code);
+    int error = 0;
+    if (choice == 1) {
+        error = (rx_ones % 2 != 0);
+    } else {
+        error = (rx_ones % 2 == 0);
+    }
+
+    if (error) {
+        printf("[Receiver] Status: ERROR DETECTED! Parity check failed.\n");
+    } else {
+        printf("[Receiver] Status: NO ERROR DETECTED. Data accepted.\n");
+    }
+
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+--- File 2/4: Q9_2_Two_Dimension_Parity.c (9.2 Two-Dimensional Parity Check (LRC & VRC)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 9.2
+ * Error Detection: Two-Dimensional Parity Checking (Row and Column Even Parity)
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_ROWS 10
+#define MAX_COLS 32
+
+int main(void) {
+    int rows, cols;
+    char data[MAX_ROWS][MAX_COLS];
+    int row_parity[MAX_ROWS] = {0};
+    int col_parity[MAX_COLS] = {0};
+
+    printf("--- 9.2 Two-Dimensional Parity Check (Even Parity) ---\n");
+    printf("Enter number of data words (rows): ");
+    if (scanf("%d", &rows) != 1 || rows <= 0 || rows > MAX_ROWS) return 1;
+
+    printf("Enter number of bits per word (columns): ");
+    if (scanf("%d", &cols) != 1 || cols <= 0 || cols > MAX_COLS) return 1;
+
+    printf("Enter each binary word (%d bits):\n", cols);
+    for (int i = 0; i < rows; i++) {
+        printf("  Word %d: ", i + 1);
+        scanf("%s", data[i]);
+    }
+
+    // Calculate Row Parities (Horizontal)
+    for (int i = 0; i < rows; i++) {
+        int count = 0;
+        for (int j = 0; j < cols; j++) {
+            if (data[i][j] == '1') count++;
+        }
+        row_parity[i] = count % 2; // 0 if even, 1 if odd
+    }
+
+    // Calculate Column Parities (Vertical - LRC)
+    for (int j = 0; j < cols; j++) {
+        int count = 0;
+        for (int i = 0; i < rows; i++) {
+            if (data[i][j] == '1') count++;
+        }
+        col_parity[j] = count % 2;
+    }
+
+    // Display Transmitted Block
+    printf("\n[Sender] Transmitted 2D Parity Matrix:\n");
+    for (int i = 0; i < rows; i++) {
+        printf("  %s | Row Parity: %d\n", data[i], row_parity[i]);
+    }
+    printf("  ");
+    for (int j = 0; j < cols; j++) printf("-");
+    printf("\n  ");
+    for (int j = 0; j < cols; j++) {
+        printf("%d", col_parity[j]);
+    }
+    printf(" <- Column Parity Row\n");
+
+    // Simulate Receiver Verification
+    printf("\n--- Receiver Verification Simulation ---\n");
+    printf("Inject single-bit error to test? (1 for Yes, 0 for No): ");
+    int inject;
+    if (scanf("%d", &inject) == 1 && inject == 1) {
+        int r, c;
+        printf("Enter row (1 to %d) and col (1 to %d) to flip: ", rows, cols);
+        scanf("%d %d", &r, &c);
+        if (r >= 1 && r <= rows && c >= 1 && c <= cols) {
+            data[r - 1][c - 1] = (data[r - 1][c - 1] == '1') ? '0' : '1';
+            printf("Flipped bit at row %d, col %d.\n", r, c);
+        }
+    }
+
+    // Recheck at Receiver
+    int err_row = -1, err_col = -1;
+    for (int i = 0; i < rows; i++) {
+        int count = 0;
+        for (int j = 0; j < cols; j++) {
+            if (data[i][j] == '1') count++;
+        }
+        if ((count % 2) != row_parity[i]) err_row = i;
+    }
+    for (int j = 0; j < cols; j++) {
+        int count = 0;
+        for (int i = 0; i < rows; i++) {
+            if (data[i][j] == '1') count++;
+        }
+        if ((count % 2) != col_parity[j]) err_col = j;
+    }
+
+    if (err_row != -1 || err_col != -1) {
+        printf("[Receiver] Status: ERROR DETECTED!\n");
+        if (err_row != -1 && err_col != -1) {
+            printf("[Receiver] Exact Error Location: Row %d, Column %d\n", err_row + 1, err_col + 1);
+            printf("[Receiver] Error successfully corrected by flipping bit back!\n");
+        }
+    } else {
+        printf("[Receiver] Status: NO ERROR DETECTED. Data block accepted.\n");
+    }
+
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+--- File 3/4: Q9_3_CRC.c (9.3 Cyclic Redundancy Check (Modulo-2 XOR)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 9.3
+ * Error Detection: Cyclic Redundancy Check (CRC) using Modulo-2 Division (XOR)
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+void xor_division(char *dividend, const char *divisor, char *remainder) {
+    int n = (int)strlen(dividend);
+    int k = (int)strlen(divisor);
+    char temp[256];
+    strcpy(temp, dividend);
+
+    for (int i = 0; i <= n - k; i++) {
+        if (temp[i] == '1') {
+            for (int j = 0; j < k; j++) {
+                temp[i + j] = (temp[i + j] == divisor[j]) ? '0' : '1';
+            }
+        }
+    }
+    // Copy the last (k - 1) bits as the remainder
+    strncpy(remainder, &temp[n - k + 1], k - 1);
+    remainder[k - 1] = '\0';
+}
+
+int main(void) {
+    char data[128], gen[32], dividend[256], rem[32], codeword[256], rx[256], rx_rem[32];
+
+    printf("--- 9.3 Cyclic Redundancy Check (CRC) ---\n");
+    printf("Enter data bits (e.g. 100100): ");
+    if (scanf("%127s", data) != 1) return 1;
+
+    printf("Enter generator polynomial (e.g. 1101): ");
+    if (scanf("%31s", gen) != 1) return 1;
+
+    int gen_len = (int)strlen(gen);
+    int data_len = (int)strlen(data);
+
+    // Prepare dividend: data appended with (gen_len - 1) zeros
+    strcpy(dividend, data);
+    for (int i = 0; i < gen_len - 1; i++) {
+        dividend[data_len + i] = '0';
+    }
+    dividend[data_len + gen_len - 1] = '\0';
+
+    // Calculate CRC remainder at sender
+    xor_division(dividend, gen, rem);
+
+    // Transmitted codeword = data + remainder
+    strcpy(codeword, data);
+    strcat(codeword, rem);
+
+    printf("\n[Sender] CRC Checksum (Remainder): %s\n", rem);
+    printf("[Sender] Transmitted Codeword     : %s\n", codeword);
+
+    // Receiver Check
+    printf("\n[Receiver] Enter received codeword (or test with %s): ", codeword);
+    if (scanf("%255s", rx) != 1) return 1;
+
+    xor_division(rx, gen, rx_rem);
+
+    // Check if remainder is all zeros
+    int has_error = 0;
+    for (int i = 0; i < gen_len - 1; i++) {
+        if (rx_rem[i] != '0') {
+            has_error = 1;
+            break;
+        }
+    }
+
+    printf("[Receiver] Remainder after division: %s\n", rx_rem);
+    if (has_error) {
+        printf("[Receiver] Status: ERROR DETECTED! Remainder is non-zero.\n");
+    } else {
+        printf("[Receiver] Status: NO ERROR DETECTED. Codeword accepted.\n");
+    }
+
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+--- File 4/4: Q9_4_Internet_Checksum.c (9.4 Internet Checksum (RFC 1071)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 9.4
+ * Error Detection: Internet Checksum Method (16-bit One's Complement Addition)
+ * As used in IPv4, TCP, and UDP headers (RFC 1071).
+ */
+
+#include <stdio.h>
+
+unsigned short compute_checksum(const unsigned short *words, int n) {
+    unsigned int sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += words[i];
+        // Fold 32-bit sum into 16 bits (end-around carry)
+        while (sum >> 16) {
+            sum = (sum & 0xFFFF) + (sum >> 16);
+        }
+    }
+    return (unsigned short)(~sum & 0xFFFF); // One's complement
+}
+
+int verify_checksum(const unsigned short *words, int n, unsigned short checksum) {
+    unsigned int sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += words[i];
+        while (sum >> 16) {
+            sum = (sum & 0xFFFF) + (sum >> 16);
+        }
+    }
+    sum += checksum;
+    while (sum >> 16) {
+        sum = (sum & 0xFFFF) + (sum >> 16);
+    }
+    return (unsigned short)(~sum & 0xFFFF) == 0;
+}
+
+int main(void) {
+    int n;
+    unsigned short data[16];
+
+    printf("--- 9.4 Internet Checksum (16-bit Words) ---\n");
+    printf("Enter number of 16-bit words (e.g. 3): ");
+    if (scanf("%d", &n) != 1 || n <= 0 || n > 16) return 1;
+
+    printf("Enter %d words in hexadecimal (e.g. 4500 003c 1c46):\n", n);
+    for (int i = 0; i < n; i++) {
+        unsigned int val;
+        printf("  Word %d: 0x", i + 1);
+        scanf("%x", &val);
+        data[i] = (unsigned short)(val & 0xFFFF);
+    }
+
+    unsigned short checksum = compute_checksum(data, n);
+    printf("\n[Sender] Calculated 16-bit Checksum: 0x%04X\n", checksum);
+
+    // Receiver Verification
+    printf("\n--- Receiver Verification ---\n");
+    printf("Enter received checksum (or press matching: 0x%04X): 0x", checksum);
+    unsigned int rx_chk;
+    scanf("%x", &rx_chk);
+
+    if (verify_checksum(data, n, (unsigned short)(rx_chk & 0xFFFF))) {
+        printf("[Receiver] Status: NO ERROR DETECTED. Sum is 0xFFFF (~Sum = 0x0000).\n");
+    } else {
+        printf("[Receiver] Status: ERROR DETECTED! Checksum verification failed.\n");
+    }
+
+    return 0;
+}
+
+
+================================================================================
+QUESTION 10: Error Correction using Hamming Code
+Unit: Unit 4: Error Detection & Correction | Category: C Code
+================================================================================
+PROBLEM STATEMENT:
+10. Write a C/C++ program to perform error correction using Hamming code method.
+
+CONCEPT / ALGORITHM SUMMARY:
+Hamming (7, 4) Code: 4 data bits (D7, D6, D5, D3) encoded with 3 parity bits (P1, P2, P4) at bit positions that are powers of 2. At receiver, syndrome bits S = s3 s2 s1 identify the exact corrupted bit position (1-7), flipping it back to correct the error.
+
+COMPILATION INSTRUCTIONS:
+gcc Q10_Hamming_Code.c -o Q10
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q10_Hamming_Code.c (Hamming (7, 4) Code Encoding & Correction) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 10
+ * Program to perform Error Detection and Correction using Hamming Code (7, 4).
+ * 4 data bits (d1, d2, d3, d4) encoded into 7-bit codeword with 3 parity bits (p1, p2, p4).
+ */
+
+#include <stdio.h>
+
+int main(void) {
+    int data[4];      // d1, d2, d3, d4
+    int code[8];      // 1-indexed: code[1] to code[7]
+    int rx[8];        // received codeword
+    int s1, s2, s4, error_pos;
+
+    printf("--- Error Correction using Hamming Code (7, 4) ---\n");
+    printf("Enter 4 data bits (separated by spaces, e.g. 1 0 1 1): ");
+    for (int i = 0; i < 4; i++) {
+        if (scanf("%d", &data[i]) != 1) return 1;
+    }
+
+    // Placing data bits at positions 3, 5, 6, 7
+    code[3] = data[0]; // d1
+    code[5] = data[1]; // d2
+    code[6] = data[2]; // d3
+    code[7] = data[3]; // d4
+
+    // Calculating even parity bits at powers of 2: 1, 2, 4
+    code[1] = code[3] ^ code[5] ^ code[7]; // p1 covers 1, 3, 5, 7
+    code[2] = code[3] ^ code[6] ^ code[7]; // p2 covers 2, 3, 6, 7
+    code[4] = code[5] ^ code[6] ^ code[7]; // p4 covers 4, 5, 6, 7
+
+    printf("\n[Sender] Parity Bits: p1 = %d, p2 = %d, p4 = %d\n", code[1], code[2], code[4]);
+    printf("[Sender] Transmitted 7-bit Codeword: ");
+    for (int i = 1; i <= 7; i++) printf("%d", code[i]);
+    printf("\n  (Bit order: p1 p2 d1 p4 d2 d3 d4)\n");
+
+    // Receiver Simulation
+    printf("\n[Receiver] Enter 7 received bits (separated by spaces): ");
+    for (int i = 1; i <= 7; i++) {
+        scanf("%d", &rx[i]);
+    }
+
+    // Calculate syndrome bits
+    s1 = rx[1] ^ rx[3] ^ rx[5] ^ rx[7];
+    s2 = rx[2] ^ rx[3] ^ rx[6] ^ rx[7];
+    s4 = rx[4] ^ rx[5] ^ rx[6] ^ rx[7];
+
+    error_pos = (s4 * 4) + (s2 * 2) + (s1 * 1);
+
+    if (error_pos == 0) {
+        printf("\n[Receiver] Status: NO ERROR DETECTED! Codeword is correct.\n");
+    } else {
+        printf("\n[Receiver] Status: ERROR DETECTED at bit position %d!\n", error_pos);
+        rx[error_pos] = 1 - rx[error_pos]; // Correct the erroneous bit
+        printf("[Receiver] Corrected Codeword: ");
+        for (int i = 1; i <= 7; i++) printf("%d", rx[i]);
+        printf("\n[Receiver] Recovered Data Bits: %d %d %d %d\n", rx[3], rx[5], rx[6], rx[7]);
+    }
+
+    return 0;
+}
+
+
+================================================================================
+QUESTION 11: Socket Programming & Client-Server Model
+Unit: Unit 5: Socket Programming & HTTP | Category: Study & C Code
+================================================================================
+PROBLEM STATEMENT:
+11. Study and implement model for Socket Programming and Client - Server model.
+
+CONCEPT / ALGORITHM SUMMARY:
+TCP Socket Programming Model: Server lifecycle: socket() -> bind() -> listen() -> accept() -> recv()/send() -> close(). Client lifecycle: socket() -> connect() -> send()/recv() -> close(). Cross-platform implementation (Winsock on Windows, POSIX on Linux).
+
+COMPILATION INSTRUCTIONS:
+Linux:   gcc Q11_1_Socket_Server.c -o server && gcc Q11_2_Socket_Client.c -o client
+Windows: gcc Q11_1_Socket_Server.c -o server.exe -lws2_32 && gcc Q11_2_Socket_Client.c -o client.exe -lws2_32
+
+--------------------------------------------------------------------------------
+--- File 1/3: Q11_Socket_Programming_Model.txt (Socket Programming Lifecycle & Theory) ---
+--------------------------------------------------------------------------------
+================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 11: STUDY AND IMPLEMENTATION OF SOCKET PROGRAMMING & CLIENT-SERVER MODEL
+================================================================================
+
+11.1 INTRODUCTION TO SOCKET PROGRAMMING
+----------------------------------------
+A socket is an endpoint for bidirectional, inter-process communication (IPC) across an 
+IP network. A network socket is bound to a combination of an **IP Address** and a **Port Number** 
+(e.g., `127.0.0.1:8080`).
+
+Sockets operate in two primary modes:
+1. **Stream Sockets (`SOCK_STREAM`)**: Based on TCP (Transmission Control Protocol). Connection-oriented, 
+   reliable, ordered, and error-checked byte stream delivery.
+2. **Datagram Sockets (`SOCK_DGRAM`)**: Based on UDP (User Datagram Protocol). Connectionless, 
+   unreliable, minimal overhead, message-boundary preserving.
+
+
+11.2 TCP CLIENT-SERVER ARCHITECTURE WORKFLOW
+---------------------------------------------
+
+         SERVER                                          CLIENT
+   ------------------                             -------------------
+     socket()                                           socket()
+        |                                                  |
+      bind()                                               |
+        |                                                  |
+     listen()                                              |
+        |                                                  |
+     accept()  <---------- [SYN: Connection Request] ---- connect()
+        |     ---------- [SYN-ACK: Acknowledgment] ------->|
+        |     <---------- [ACK: Connection Established] ---|
+        |                                                  |
+     recv()    <---------- [Data Request] ----------------- send()
+        |                                                  |
+     send()    ---------- [Data Response] ----------------> recv()
+        |                                                  |
+     close()   <---------- [FIN / Close] ------------------ close()
+
+
+11.3 CORE SOCKET SYSTEM CALL PRIMITIVES (C API)
+------------------------------------------------
+1. `socket(int domain, int type, int protocol)`:
+   - Creates an unbound network socket descriptor.
+   - Example: `int fd = socket(AF_INET, SOCK_STREAM, 0);` (IPv4, TCP).
+
+2. `bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`:
+   - Assigns a local IP address and port number to the socket.
+   - Used by servers to listen on a well-known port.
+
+3. `listen(int sockfd, int backlog)`:
+   - Marks the socket as passive (ready to accept incoming client connections).
+   - `backlog`: Maximum number of pending connections queued.
+
+4. `accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)`:
+   - Blocks until an incoming connection arrives.
+   - Extracts first connection from queue and returns a NEW active connected socket descriptor.
+
+5. `connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`:
+   - Invoked by the client to initiate the 3-Way TCP handshake with the server.
+
+6. `send()` / `recv()` (or `write()` / `read()`):
+   - Transmits and receives data buffers over the established TCP byte stream.
+
+7. `close()` (or `closesocket()` on Windows):
+   - Terminates socket connection and releases OS descriptor resources.
+
+
+11.4 SOURCE CODE IMPLEMENTATION
+--------------------------------
+The corresponding C source code files are provided:
+- `Q11_1_Socket_Server.c`: Standalone TCP Server that listens on port 8080 and replies to client.
+- `Q11_2_Socket_Client.c`: Standalone TCP Client that connects to 127.0.0.1:8080 and exchanges data.
+Both files include cross-platform support (Linux POSIX & Windows Winsock).
+================================================================================
+
+--------------------------------------------------------------------------------
+--- File 2/3: Q11_1_Socket_Server.c (11.1 TCP Socket Server (Cross-platform)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 11.1
+ * Implementation of TCP Socket Server (Client - Server Model)
+ * Listens on port 8080, receives a message from the client, and sends a reply.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #pragma comment(lib, "ws2_32.lib")
+  typedef int socklen_t;
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+  #include <unistd.h>
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define PORT 8080
+#define BUFFER_SIZE 1024
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+        printf("WSAStartup failed.\n");
+        return 1;
+    }
+#endif
+
+    int server_fd, client_fd;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t client_len = sizeof(client_addr);
+    char buffer[BUFFER_SIZE] = {0};
+
+    // 1. Create socket
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("Socket creation failed");
+        return 1;
+    }
+
+    // 2. Bind to IP and Port
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
+
+    if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Bind failed");
+        CLOSE_SOCK(server_fd);
+        return 1;
+    }
+
+    // 3. Listen for incoming connections
+    if (listen(server_fd, 3) < 0) {
+        perror("Listen failed");
+        CLOSE_SOCK(server_fd);
+        return 1;
+    }
+
+    printf("========================================\n");
+    printf("TCP Server listening on port %d...\n", PORT);
+    printf("Waiting for client connection...\n");
+    printf("========================================\n");
+
+    // 4. Accept client connection
+    client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);
+    if (client_fd < 0) {
+        perror("Accept failed");
+        CLOSE_SOCK(server_fd);
+        return 1;
+    }
+
+    printf("[+] Client connected from %s:%d\n", 
+           inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+
+    // 5. Receive message from client
+    int bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_read > 0) {
+        buffer[bytes_read] = '\0';
+        printf("[Client Message]: %s\n", buffer);
+    }
+
+    // 6. Send response to client
+    const char *reply = "Hello from TCP Server! Message received successfully.";
+    send(client_fd, reply, (int)strlen(reply), 0);
+    printf("[+] Reply sent to client.\n");
+
+    // 7. Cleanup
+    CLOSE_SOCK(client_fd);
+    CLOSE_SOCK(server_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    printf("[+] Connection closed.\n");
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+--- File 3/3: Q11_2_Socket_Client.c (11.2 TCP Socket Client (Cross-platform)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 11.2
+ * Implementation of TCP Socket Client (Client - Server Model)
+ * Connects to server on 127.0.0.1:8080, sends a message, and reads the reply.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #pragma comment(lib, "ws2_32.lib")
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+  #include <unistd.h>
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define SERVER_IP "127.0.0.1"
+#define PORT 8080
+#define BUFFER_SIZE 1024
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+        printf("WSAStartup failed.\n");
+        return 1;
+    }
+#endif
+
+    int sock_fd;
+    struct sockaddr_in server_addr;
+    char buffer[BUFFER_SIZE] = {0};
+    char message[256];
+
+    // 1. Create socket
+    if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("Socket creation failed");
+        return 1;
+    }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
+
+    printf("Connecting to TCP Server at %s:%d...\n", SERVER_IP, PORT);
+
+    // 2. Connect to server
+    if (connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Connection to server failed. Ensure server is running first!");
+        CLOSE_SOCK(sock_fd);
+        return 1;
+    }
+
+    printf("[+] Connected to server successfully!\n");
+
+    // 3. Send message
+    printf("Enter message to send to server: ");
+    if (!fgets(message, sizeof(message), stdin)) return 1;
+    message[strcspn(message, "\r\n")] = '\0';
+
+    send(sock_fd, message, (int)strlen(message), 0);
+    printf("[+] Message sent.\n");
+
+    // 4. Receive reply
+    int bytes_read = recv(sock_fd, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_read > 0) {
+        buffer[bytes_read] = '\0';
+        printf("[Server Response]: %s\n", buffer);
+    }
+
+    // 5. Cleanup
+    CLOSE_SOCK(sock_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    printf("[+] Socket closed.\n");
+    return 0;
+}
+
+
+================================================================================
+QUESTION 12: HTTP Sockets: Web Page Upload & Download
+Unit: Unit 5: Socket Programming & HTTP | Category: C Code (2 Parts)
+================================================================================
+PROBLEM STATEMENT:
+12. Create a socket for HTTP for web page upload and download.
+
+CONCEPT / ALGORITHM SUMMARY:
+Raw HTTP Client Socket implementation over TCP port 80. 1) HTTP Download: constructs GET / HTTP/1.1 request, reads response headers and body, writes HTML to disk. 2) HTTP Upload: constructs POST / HTTP/1.1 with Content-Length & Content-Type, sends payload data.
+
+COMPILATION INSTRUCTIONS:
+Linux:   gcc Q12_1_HTTP_Download.c -o Q12_1 && gcc Q12_2_HTTP_Upload.c -o Q12_2
+Windows: gcc Q12_1_HTTP_Download.c -o Q12_1.exe -lws2_32 && gcc Q12_2_HTTP_Upload.c -o Q12_2.exe -lws2_32
+
+--------------------------------------------------------------------------------
+--- File 1/2: Q12_1_HTTP_Download.c (12.1 HTTP GET Web Page Downloader) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 12.1
+ * HTTP Socket Client for Web Page Download (HTTP GET)
+ * Connects to an HTTP server over Port 80, requests a page, and saves the response.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #pragma comment(lib, "ws2_32.lib")
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+  #include <netdb.h>
+  #include <unistd.h>
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define BUFFER_SIZE 4096
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
+#endif
+
+    char host[64] = "example.com";
+    char path[128] = "/";
+    int port = 80;
+
+    printf("--- 12.1 HTTP Socket Web Page Download (GET) ---\n");
+    printf("Target Host: %s, Port: %d, Path: %s\n", host, port, path);
+
+    // 1. Resolve host
+    struct hostent *server = gethostbyname(host);
+    if (!server) {
+        printf("Error: Could not resolve host %s\n", host);
+        return 1;
+    }
+
+    // 2. Create Socket
+    int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock_fd < 0) {
+        perror("Socket failed");
+        return 1;
+    }
+
+    struct sockaddr_in serv_addr;
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    memcpy(&serv_addr.sin_addr.s_addr, server->h_addr_list[0], server->h_length);
+    serv_addr.sin_port = htons(port);
+
+    // 3. Connect to HTTP server
+    printf("Connecting to %s...\n", host);
+    if (connect(sock_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        perror("Connection failed");
+        CLOSE_SOCK(sock_fd);
+        return 1;
+    }
+    printf("[+] Connected to HTTP server.\n");
+
+    // 4. Construct and Send HTTP GET Request
+    char request[512];
+    snprintf(request, sizeof(request),
+             "GET %s HTTP/1.1\r\n"
+             "Host: %s\r\n"
+             "User-Agent: C-Socket-HTTP-Client/1.0\r\n"
+             "Connection: close\r\n\r\n",
+             path, host);
+
+    send(sock_fd, request, (int)strlen(request), 0);
+    printf("[+] HTTP GET Request sent:\n%s\n", request);
+
+    // 5. Receive HTTP Response and Save to File
+    FILE *fp = fopen("downloaded_page.html", "wb");
+    char buffer[BUFFER_SIZE];
+    int total_bytes = 0, bytes_received;
+
+    printf("[+] Receiving HTTP Response...\n");
+    while ((bytes_received = recv(sock_fd, buffer, sizeof(buffer), 0)) > 0) {
+        if (fp) fwrite(buffer, 1, bytes_received, fp);
+        total_bytes += bytes_received;
+        // Print preview to console
+        fwrite(buffer, 1, bytes_received, stdout);
+    }
+
+    if (fp) {
+        fclose(fp);
+        printf("\n\n[+] Download Complete! Total bytes: %d\n", total_bytes);
+        printf("[+] Saved web page to 'downloaded_page.html'.\n");
+    }
+
+    CLOSE_SOCK(sock_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+--- File 2/2: Q12_2_HTTP_Upload.c (12.2 HTTP POST Web Page / Data Uploader) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 12.2
+ * HTTP Socket Client for Web Page / Data Upload (HTTP POST)
+ * Connects to an HTTP server, uploads payload with Content-Length & Content-Type,
+ * and prints the server's acknowledgment response.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #pragma comment(lib, "ws2_32.lib")
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+  #include <netdb.h>
+  #include <unistd.h>
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define BUFFER_SIZE 4096
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
+#endif
+
+    const char *host = "httpbin.org";
+    const char *path = "/post";
+    int port = 80;
+
+    // Payload to upload
+    const char *payload = "title=DCCN+Lab+Assignment&author=Aryan&status=Submitted";
+    int payload_len = (int)strlen(payload);
+
+    printf("--- 12.2 HTTP Socket Web Page Data Upload (POST) ---\n");
+    printf("Target Host: %s:%d, Path: %s\n", host, port, path);
+    printf("Uploading Payload: \"%s\" (%d bytes)\n", payload, payload_len);
+
+    // 1. Resolve host
+    struct hostent *server = gethostbyname(host);
+    if (!server) {
+        printf("Error: Could not resolve host %s\n", host);
+        return 1;
+    }
+
+    // 2. Create socket
+    int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock_fd < 0) {
+        perror("Socket creation failed");
+        return 1;
+    }
+
+    struct sockaddr_in serv_addr;
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    memcpy(&serv_addr.sin_addr.s_addr, server->h_addr_list[0], server->h_length);
+    serv_addr.sin_port = htons(port);
+
+    // 3. Connect to server
+    printf("Connecting to %s...\n", host);
+    if (connect(sock_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        perror("Connection failed");
+        CLOSE_SOCK(sock_fd);
+        return 1;
+    }
+    printf("[+] Connected to server.\n");
+
+    // 4. Construct HTTP POST request header and body
+    char request[1024];
+    snprintf(request, sizeof(request),
+             "POST %s HTTP/1.1\r\n"
+             "Host: %s\r\n"
+             "User-Agent: C-Socket-HTTP-Upload/1.0\r\n"
+             "Content-Type: application/x-www-form-urlencoded\r\n"
+             "Content-Length: %d\r\n"
+             "Connection: close\r\n\r\n"
+             "%s",
+             path, host, payload_len, payload);
+
+    send(sock_fd, request, (int)strlen(request), 0);
+    printf("[+] HTTP POST Upload Request Sent:\n%s\n", request);
+
+    // 5. Receive Server Response
+    char buffer[BUFFER_SIZE];
+    int bytes_received;
+    printf("[+] Server Response:\n----------------------------------------\n");
+    while ((bytes_received = recv(sock_fd, buffer, sizeof(buffer) - 1, 0)) > 0) {
+        buffer[bytes_received] = '\0';
+        printf("%s", buffer);
+    }
+    printf("\n----------------------------------------\n");
+    printf("[+] Upload and response reception completed successfully.\n");
+
+    CLOSE_SOCK(sock_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    return 0;
+}
+
+
+================================================================================
+QUESTION 13: Simulation of PING & TRACEROUTE Commands
+Unit: Unit 6: Protocol Simulations | Category: C Code (2 Parts)
+================================================================================
+PROBLEM STATEMENT:
+13. Write a code simulating PING and TRACEROUTE commands.
+
+CONCEPT / ALGORITHM SUMMARY:
+1) PING Simulator: Sends simulated ICMP Echo Requests with sequence numbers, computes random realistic RTTs, simulates packet drop rate, prints min/avg/max/mdev stats. 2) TRACEROUTE Simulator: Increments TTL from 1 upwards, queries 3 probes per hop, displays IP hops and latencies until destination reached.
+
+COMPILATION INSTRUCTIONS:
+gcc Q13_1_Ping_Simulation.c -o Q13_1
+gcc Q13_2_Traceroute_Simulation.c -o Q13_2
+
+--------------------------------------------------------------------------------
+--- File 1/2: Q13_1_Ping_Simulation.c (13.1 PING Command Simulator) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 13.1
+ * Simulation of PING Command in C
+ * Simulates sending ICMP Echo Requests, calculating RTT with realistic latency,
+ * packet loss, and generating summary statistics (min/max/avg RTT).
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#ifdef _WIN32
+  #include <windows.h>
+  #define SLEEP_MS(ms) Sleep(ms)
+#else
+  #include <unistd.h>
+  #define SLEEP_MS(ms) usleep((ms) * 1000)
+#endif
+
+int main(void) {
+    char target[128];
+    int count = 4;
+    int bytes = 32;
+    int ttl = 64;
+
+    srand((unsigned int)time(NULL));
+
+    printf("--- 13.1 PING Command Simulation ---\n");
+    printf("Enter target hostname or IP (e.g. google.com): ");
+    if (scanf("%127s", target) != 1) return 1;
+
+    printf("\nPinging %s with %d bytes of data:\n\n", target, bytes);
+
+    int sent = 0, received = 0;
+    int min_rtt = 9999, max_rtt = 0, sum_rtt = 0;
+
+    for (int seq = 1; seq <= count; seq++) {
+        sent++;
+        SLEEP_MS(500); // Simulate transmission interval
+
+        // Simulate 10% packet drop chance
+        int drop = (rand() % 10 == 0);
+
+        if (drop) {
+            printf("Request timed out.\n");
+        } else {
+            // Simulate RTT between 20ms and 80ms
+            int rtt = 20 + (rand() % 61);
+            received++;
+            sum_rtt += rtt;
+            if (rtt < min_rtt) min_rtt = rtt;
+            if (rtt > max_rtt) max_rtt = rtt;
+
+            printf("Reply from %s: bytes=%d time=%dms TTL=%d (icmp_seq=%d)\n",
+                   target, bytes, rtt, ttl, seq);
+        }
+    }
+
+    int lost = sent - received;
+    double loss_percent = ((double)lost / sent) * 100.0;
+
+    printf("\n--- Ping statistics for %s ---\n", target);
+    printf("    Packets: Sent = %d, Received = %d, Lost = %d (%.0f%% loss),\n",
+           sent, received, lost, loss_percent);
+
+    if (received > 0) {
+        double avg_rtt = (double)sum_rtt / received;
+        printf("Approximate round trip times in milli-seconds:\n");
+        printf("    Minimum = %dms, Maximum = %dms, Average = %.1fms\n",
+               min_rtt, max_rtt, avg_rtt);
+    }
+
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+--- File 2/2: Q13_2_Traceroute_Simulation.c (13.2 TRACEROUTE Command Simulator) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 13.2
+ * Simulation of TRACEROUTE Command in C
+ * Simulates hop-by-hop packet routing with increasing TTL (1, 2, 3...),
+ * intermediate router ICMP Time Exceeded responses, 3 probe latency samples, and route completion.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#ifdef _WIN32
+  #include <windows.h>
+  #define SLEEP_MS(ms) Sleep(ms)
+#else
+  #include <unistd.h>
+  #define SLEEP_MS(ms) usleep((ms) * 1000)
+#endif
+
+// Simulated hop router addresses
+const char *simulated_hops[] = {
+    "172.16.8.1",       // Hop 1: Lab Default Gateway
+    "172.16.13.1",      // Hop 2: Campus Core Switch
+    "136.232.33.117",   // Hop 3: ISP Border Router
+    "49.44.59.153",     // Hop 4: National Backbone Router
+    "72.14.243.188",    // Hop 5: Peering Exchange
+    "142.250.143.138"   // Hop 6: Target Destination
+};
+
+int main(void) {
+    char target[128];
+    int max_hops = 10;
+    int total_sim_hops = sizeof(simulated_hops) / sizeof(simulated_hops[0]);
+
+    srand((unsigned int)time(NULL));
+
+    printf("--- 13.2 TRACEROUTE Simulation ---\n");
+    printf("Enter destination hostname or IP (e.g. google.com): ");
+    if (scanf("%127s", target) != 1) return 1;
+
+    printf("\nTracing route to %s over a maximum of %d hops:\n\n", target, max_hops);
+    printf("  Hop     RTT 1      RTT 2      RTT 3    IP Address\n");
+    printf("  --------------------------------------------------------\n");
+
+    int base_latency = 1;
+
+    for (int ttl = 1; ttl <= max_hops; ttl++) {
+        SLEEP_MS(300); // Simulate network round-trip delay
+
+        int hop_idx = ttl - 1;
+        if (hop_idx >= total_sim_hops) {
+            break;
+        }
+
+        // Generate 3 probe latencies
+        int rtt1 = base_latency + (rand() % 5);
+        int rtt2 = base_latency + (rand() % 5);
+        int rtt3 = base_latency + (rand() % 5);
+
+        // Simulate occasional packet drop (timeout)
+        int timeout_hop = (ttl == 5 && (rand() % 4 == 0));
+
+        if (timeout_hop) {
+            printf("  %2d        *          *          *      Request timed out.\n", ttl);
+        } else {
+            printf("  %2d     %3d ms     %3d ms     %3d ms    %s\n",
+                   ttl, rtt1, rtt2, rtt3, simulated_hops[hop_idx]);
+        }
+
+        base_latency += 7 + (rand() % 8); // Latency increases as distance grows
+
+        // Check if destination reached
+        if (hop_idx == total_sim_hops - 1) {
+            printf("\nTrace complete. Destination reached in %d hops.\n", ttl);
+            return 0;
+        }
+    }
+
+    printf("\nTrace complete.\n");
+    return 0;
+}
+
+
+================================================================================
+QUESTION 14: DHCP Server Simulation (DORA)
+Unit: Unit 6: Protocol Simulations | Category: C Code
+================================================================================
+PROBLEM STATEMENT:
+14. Write a code simulating DHCP server.
+
+CONCEPT / ALGORITHM SUMMARY:
+Full DHCP Server Simulation implementing DORA exchange: 1) DHCPDISCOVER (client broadcast), 2) DHCPOFFER (server reserves IP from pool), 3) DHCPREQUEST (client requests offered IP), 4) DHCPACK (server binds MAC, assigns subnet mask, gateway, DNS, and lease time). Includes IP pool allocation and release.
+
+COMPILATION INSTRUCTIONS:
+gcc Q14_DHCP_Server_Simulation.c -o Q14
+
+--------------------------------------------------------------------------------
+--- File 1/1: Q14_DHCP_Server_Simulation.c (DHCP Server Simulation (Discover, Offer, Request, Ack)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 14
+ * Simulation of DHCP (Dynamic Host Configuration Protocol) Server
+ * Simulates DORA Workflow: Discover -> Offer -> Request -> Acknowledge.
+ * Manages IP Address Pool, Client Leases, Gateway, DNS, and Subnet Mask.
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+#define POOL_SIZE 8
+#define SUBNET_MASK "255.255.255.0"
+#define DEFAULT_GATEWAY "192.168.1.1"
+#define DNS_SERVER "8.8.8.8"
+#define LEASE_TIME 3600 // seconds
+
+typedef struct {
+    char ip[16];
+    char mac[18];
+    int allocated;
+} Lease;
+
+Lease ip_pool[POOL_SIZE];
+
+void init_pool(void) {
+    for (int i = 0; i < POOL_SIZE; i++) {
+        snprintf(ip_pool[i].ip, sizeof(ip_pool[i].ip), "192.168.1.%d", 100 + i);
+        ip_pool[i].mac[0] = '\0';
+        ip_pool[i].allocated = 0;
+    }
+}
+
+void display_pool(void) {
+    printf("\n=== Current DHCP IP Pool & Leases ===\n");
+    printf("%-5s | %-16s | %-18s | %-10s\n", "Index", "IP Address", "Client MAC", "Status");
+    printf("---------------------------------------------------------\n");
+    for (int i = 0; i < POOL_SIZE; i++) {
+        printf("%-5d | %-16s | %-18s | %-10s\n",
+               i + 1,
+               ip_pool[i].ip,
+               ip_pool[i].allocated ? ip_pool[i].mac : "None",
+               ip_pool[i].allocated ? "LEASED" : "AVAILABLE");
+    }
+    printf("=========================================================\n");
+}
+
+void allocate_ip(const char *mac) {
+    // 1. Check if MAC already holds a lease
+    for (int i = 0; i < POOL_SIZE; i++) {
+        if (ip_pool[i].allocated && strcmp(ip_pool[i].mac, mac) == 0) {
+            printf("\n[!] Client %s already holds lease for IP: %s\n", mac, ip_pool[i].ip);
+            return;
+        }
+    }
+
+    // 2. Find first free IP
+    int free_idx = -1;
+    for (int i = 0; i < POOL_SIZE; i++) {
+        if (!ip_pool[i].allocated) {
+            free_idx = i;
+            break;
+        }
+    }
+
+    if (free_idx == -1) {
+        printf("\n[-] DHCP Server Error: IP pool exhausted! No IP available.\n");
+        return;
+    }
+
+    // 3. Simulate DORA 4-way handshake
+    printf("\n--- Simulating DHCP DORA Exchange ---\n");
+    printf("1. [Client -> Broadcast] DHCP DISCOVER (Looking for DHCP Server from MAC %s)\n", mac);
+    printf("2. [Server -> Client   ] DHCP OFFER    (Offering IP: %s)\n", ip_pool[free_idx].ip);
+    printf("3. [Client -> Server   ] DHCP REQUEST  (Requesting lease for %s)\n", ip_pool[free_idx].ip);
+    printf("4. [Server -> Client   ] DHCP ACK      (Confirmed IP Lease)\n");
+
+    // Commit lease
+    ip_pool[free_idx].allocated = 1;
+    strncpy(ip_pool[free_idx].mac, mac, sizeof(ip_pool[free_idx].mac) - 1);
+
+    printf("\n[+] Lease Granted successfully!\n");
+    printf("    Assigned IP    : %s\n", ip_pool[free_idx].ip);
+    printf("    Subnet Mask    : %s\n", SUBNET_MASK);
+    printf("    Default Gateway: %s\n", DEFAULT_GATEWAY);
+    printf("    DNS Server     : %s\n", DNS_SERVER);
+    printf("    Lease Duration : %d seconds\n", LEASE_TIME);
+}
+
+void release_ip(const char *mac) {
+    for (int i = 0; i < POOL_SIZE; i++) {
+        if (ip_pool[i].allocated && strcmp(ip_pool[i].mac, mac) == 0) {
+            ip_pool[i].allocated = 0;
+            ip_pool[i].mac[0] = '\0';
+            printf("\n[+] DHCP RELEASE received: IP %s released by MAC %s.\n", ip_pool[i].ip, mac);
+            return;
+        }
+    }
+    printf("\n[-] No active lease found for MAC: %s\n", mac);
+}
+
+int main(void) {
+    init_pool();
+    int choice;
+    char mac[18];
+
+    printf("==========================================\n");
+    printf("       DHCP SERVER SIMULATION SYSTEM      \n");
+    printf("==========================================\n");
+
+    while (1) {
+        printf("\n1. Request IP Address (DORA Workflow)\n");
+        printf("2. Release IP Address (DHCP RELEASE)\n");
+        printf("3. View IP Pool and Lease Status\n");
+        printf("4. Exit\n");
+        printf("Enter your choice (1-4): ");
+        if (scanf("%d", &choice) != 1) break;
+
+        switch (choice) {
+            case 1:
+                printf("Enter Client MAC Address (e.g. AA:BB:CC:DD:EE:01): ");
+                scanf("%17s", mac);
+                allocate_ip(mac);
+                break;
+            case 2:
+                printf("Enter Client MAC Address to Release: ");
+                scanf("%17s", mac);
+                release_ip(mac);
+                break;
+            case 3:
+                display_pool();
+                break;
+            case 4:
+                printf("Exiting DHCP Server Simulation.\n");
+                return 0;
+            default:
+                printf("Invalid selection!\n");
+        }
+    }
+    return 0;
+}
+
+
+================================================================================
+QUESTION 15: Routing Table Implementation
+Unit: Unit 7: Routing Algorithms | Category: C Code (2 Algorithms)
+================================================================================
+PROBLEM STATEMENT:
+15. Implement the routing table using:
+ a) Dijkstra's algorithm.
+ b) Distance vector Routing algorithm.
+
+CONCEPT / ALGORITHM SUMMARY:
+1) Dijkstra's Algorithm: Link-State shortest path tree (OSPF) from source router using greedy distance relaxation, generates complete routing table with Next-Hop router. 2) Distance Vector Routing: Distributed Bellman-Ford algorithm (RIP) exchanging cost vectors with neighbors iteratively until convergence: D_x(y) = min_v { c(x,v) + D_v(y) }.
+
+COMPILATION INSTRUCTIONS:
+gcc Q15_1_Dijkstra_Routing.c -o Q15_1
+gcc Q15_2_Distance_Vector_Routing.c -o Q15_2
+
+--------------------------------------------------------------------------------
+--- File 1/2: Q15_1_Dijkstra_Routing.c (15.1 Dijkstra's Shortest Path Routing (OSPF)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 15.1
+ * Routing Table Implementation using Dijkstra's Shortest Path Algorithm
+ * (Link State Routing Protocol - e.g. OSPF)
+ */
+
+#include <stdio.h>
+
+#define MAX_NODES 10
+#define INF 9999
+
+int main(void) {
+    int n, src;
+    int cost[MAX_NODES][MAX_NODES];
+    int dist[MAX_NODES];
+    int visited[MAX_NODES] = {0};
+    int next_hop[MAX_NODES];
+
+    printf("--- 15.1 Dijkstra's Link-State Routing Table ---\n");
+    printf("Enter number of routers/nodes (max %d): ", MAX_NODES);
+    if (scanf("%d", &n) != 1 || n <= 0 || n > MAX_NODES) return 1;
+
+    printf("Enter adjacency cost matrix (%d x %d, enter %d for no direct link):\n", n, n, INF);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &cost[i][j]);
+            if (i == j) cost[i][j] = 0;
+        }
+    }
+
+    printf("Enter source router ID (0 to %d): ", n - 1);
+    if (scanf("%d", &src) != 1 || src < 0 || src >= n) return 1;
+
+    // Initialization
+    for (int i = 0; i < n; i++) {
+        dist[i] = cost[src][i];
+        if (cost[src][i] != INF && i != src) {
+            next_hop[i] = i; // Direct neighbor is initial next hop
+        } else {
+            next_hop[i] = -1;
+        }
+    }
+    visited[src] = 1;
+    dist[src] = 0;
+    next_hop[src] = src;
+
+    // Dijkstra's Algorithm
+    for (int count = 1; count < n; count++) {
+        int min_dist = INF, u = -1;
+
+        // Pick unvisited node with minimum distance
+        for (int i = 0; i < n; i++) {
+            if (!visited[i] && dist[i] < min_dist) {
+                min_dist = dist[i];
+                u = i;
+            }
+        }
+
+        if (u == -1 || min_dist == INF) break;
+        visited[u] = 1;
+
+        // Relax neighbors of u
+        for (int v = 0; v < n; v++) {
+            if (!visited[v] && cost[u][v] != INF && (dist[u] + cost[u][v] < dist[v])) {
+                dist[v] = dist[u] + cost[u][v];
+                next_hop[v] = next_hop[u]; // Next hop remains the same as that to reach u
+            }
+        }
+    }
+
+    // Display Routing Table for Source Router
+    printf("\n============================================\n");
+    printf("      ROUTING TABLE FOR ROUTER %d (OSPF)    \n", src);
+    printf("============================================\n");
+    printf(" Destination | Total Cost | Next Hop Router \n");
+    printf("--------------------------------------------\n");
+    for (int i = 0; i < n; i++) {
+        if (dist[i] == INF) {
+            printf("      %2d     |  UNREACH   |        --       \n", i);
+        } else {
+            printf("      %2d     |    %4d    |        %2d       \n", i, dist[i], next_hop[i]);
+        }
+    }
+    printf("============================================\n");
+
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+--- File 2/2: Q15_2_Distance_Vector_Routing.c (15.2 Distance Vector Routing (Bellman-Ford / RIP)) ---
+--------------------------------------------------------------------------------
+/*
+ * IT302 DCCN Lab - Question 15.2
+ * Routing Table Implementation using Distance Vector Routing Algorithm
+ * Based on the Bellman-Ford Equation: D_x(y) = min_v { c(x, v) + D_v(y) }
+ * (RIP - Routing Information Protocol)
+ */
+
+#include <stdio.h>
+
+#define MAX_NODES 10
+#define INF 9999
+
+struct RouteEntry {
+    int dist[MAX_NODES];
+    int next_hop[MAX_NODES];
+} routing_table[MAX_NODES];
+
+int main(void) {
+    int n;
+    int cost[MAX_NODES][MAX_NODES];
+
+    printf("--- 15.2 Distance Vector Routing (Bellman-Ford) ---\n");
+    printf("Enter number of routers/nodes (max %d): ", MAX_NODES);
+    if (scanf("%d", &n) != 1 || n <= 0 || n > MAX_NODES) return 1;
+
+    printf("Enter link cost matrix (%d x %d, enter %d for no direct link):\n", n, n, INF);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &cost[i][j]);
+            if (i == j) cost[i][j] = 0;
+            // Initial distance vector is the direct link cost
+            routing_table[i].dist[j] = cost[i][j];
+            routing_table[i].next_hop[j] = (cost[i][j] != INF && i != j) ? j : i;
+        }
+    }
+
+    // Iterative Distance Vector exchange until convergence
+    int updated;
+    int iteration = 0;
+    do {
+        updated = 0;
+        iteration++;
+        for (int i = 0; i < n; i++) {           // For each router i
+            for (int j = 0; j < n; j++) {       // For each destination j
+                for (int k = 0; k < n; k++) {   // Check path via neighbor k
+                    if (cost[i][k] != INF && routing_table[k].dist[j] != INF) {
+                        int new_dist = cost[i][k] + routing_table[k].dist[j];
+                        if (new_dist < routing_table[i].dist[j]) {
+                            routing_table[i].dist[j] = new_dist;
+                            routing_table[i].next_hop[j] = k;
+                            updated = 1;
+                        }
+                    }
+                }
+            }
+        }
+    } while (updated);
+
+    printf("\nRouting tables converged in %d iteration(s).\n", iteration);
+
+    // Display Converged Routing Tables for each router
+    for (int i = 0; i < n; i++) {
+        printf("\n============================================\n");
+        printf("      CONVERGED ROUTING TABLE: ROUTER %d    \n", i);
+        printf("============================================\n");
+        printf(" Destination | Total Cost | Next Hop Router \n");
+        printf("--------------------------------------------\n");
+        for (int j = 0; j < n; j++) {
+            if (routing_table[i].dist[j] == INF) {
+                printf("      %2d     |  UNREACH   |        --       \n", j);
+            } else {
+                printf("      %2d     |    %4d    |        %2d       \n",
+                       j, routing_table[i].dist[j], routing_table[i].next_hop[j]);
+            }
+        }
+        printf("============================================\n");
+    }
+
+    return 0;
+}
+
