@@ -1,5 +1,10 @@
 # IT302 - Data Communication and Computer Networks (DCCN) Lab Assignment
 
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Portal-38bdf8?style=for-the-badge&logo=github&logoColor=white)](https://aryan9891.github.io/DCCN-Lab-repo/index.html)
+[![Repo](https://img.shields.io/badge/GitHub-Repository-1e293b?style=for-the-badge&logo=github)](https://github.com/Aryan9891/DCCN-Lab-repo)
+
+🌐 **Live Deployed Web Portal**: **[https://aryan9891.github.io/DCCN-Lab-repo/index.html](https://aryan9891.github.io/DCCN-Lab-repo/index.html)**
+
 This repository contains short, crisp C implementations for all practical coding problems and text documentation for all theoretical/empirical questions from the **IT302 DCCN Lab Assignment** (`IT302 DCCNLAB ASSIGNMENT.pdf`).
 
 Click on any **Main Question Tag** below to directly view or open that question's file.
