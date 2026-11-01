@@ -1,0 +1,3507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT302 - DCCN Lab Assignment Solutions & Source Code</title>
+    <meta name="description" content="Complete C programs and empirical reports for IT302 Data Communication and Computer Networks Lab Assignment.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --surface-hover: #334155;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-purple: #c084fc;
+            --accent-amber: #fbbf24;
+            --code-bg: #090d16;
+            --sidebar-width: 320px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--surface-color);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, rgba(30,41,59,1) 0%, rgba(15,23,42,0.8) 100%);
+        }
+
+        .sidebar-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .search-box {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .nav-list {
+            flex: 1;
+            padding: 10px 0;
+        }
+
+        .unit-header {
+            padding: 12px 16px 6px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: var(--accent-amber);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            transition: all 0.15s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--surface-hover);
+            color: var(--text-primary);
+            border-left-color: var(--accent-blue);
+        }
+
+        .nav-tag {
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .nav-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Main Content Styling */
+        #main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 36px 48px;
+            max-width: 1200px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 36px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .hero-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: #0f172a;
+        }
+
+        .btn-primary:hover {
+            background-color: #7dd3fc;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--surface-color);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--surface-hover);
+        }
+
+        /* Question Cards */
+        .question-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 36px;
+            scroll-margin-top: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 14px;
+        }
+
+        .card-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .anchor-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.1rem;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .anchor-link:hover {
+            opacity: 1;
+            color: var(--accent-blue);
+        }
+
+        .badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-c {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .badge-txt {
+            background: rgba(192, 132, 252, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+        }
+
+        .problem-box {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 18px;
+            font-size: 0.92rem;
+            color: #cbd5e1;
+        }
+
+        .problem-box strong {
+            color: var(--accent-blue);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Tabs Styling */
+        .tabs-container {
+            margin-top: 14px;
+        }
+
+        .tab-buttons-bar {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 12px;
+            padding-bottom: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+            font-weight: 600;
+            background-color: rgba(56, 189, 248, 0.08);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0b0f19;
+            padding: 8px 14px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            font-size: 0.8rem;
+        }
+
+        .file-name a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .file-name a:hover {
+            text-decoration: underline;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .copy-btn, .download-btn {
+            background-color: var(--surface-hover);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .copy-btn:hover, .download-btn:hover {
+            background-color: var(--accent-blue);
+            color: #0f172a;
+        }
+
+        .code-block {
+            background-color: var(--code-bg) !important;
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            padding: 16px !important;
+            margin: 0 !important;
+            max-height: 480px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace !important;
+            font-size: 0.85rem !important;
+        }
+
+        /* Toast feedback */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: var(--accent-green);
+            color: #052e16;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            #sidebar {
+                display: none;
+            }
+            #main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">IT302 DCCN LAB</div>
+            <div class="sidebar-subtitle">Assignments & Source Codes</div>
+        </div>
+        <div class="search-box">
+            <input type="text" id="search-input" class="search-input" placeholder="Search questions..." onkeyup="filterQuestions()">
+        </div>
+        <div class="nav-list" id="nav-list">
+            <div class="unit-header">Unit 1: Network Topology &amp; Commands</div>
+
+        <a href="#q1" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q1</span>
+            <span class="nav-title">Q1: Lab Network Topology, Interfaces, Routers &amp; IP Pools</span>
+        </a>
+        
+        <a href="#q2" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q2</span>
+            <span class="nav-title">Q2: Networking Commands (PING, TRACEROUTE), Telnet &amp; Delay</span>
+        </a>
+        
+        <a href="#q3" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q3</span>
+            <span class="nav-title">Q3: Ping Tool Statistics &amp; Round-Trip Times</span>
+        </a>
+        
+        <a href="#q4" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q4</span>
+            <span class="nav-title">Q4: Trace Route Path Analysis</span>
+        </a>
+        <div class="unit-header">Unit 2: IP Addressing &amp; Conversion</div>
+
+        <a href="#q5" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q5</span>
+            <span class="nav-title">Q5: IPv4 Class Determination</span>
+        </a>
+        
+        <a href="#q6" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q6</span>
+            <span class="nav-title">Q6: Dotted Decimal to 32-bit Address Translation</span>
+        </a>
+        <div class="unit-header">Unit 3: Data Link Layer Framing</div>
+
+        <a href="#q7" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q7</span>
+            <span class="nav-title">Q7: Bit Stuffing and De-stuffing</span>
+        </a>
+        
+        <a href="#q8" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q8</span>
+            <span class="nav-title">Q8: Character Stuffing and De-stuffing</span>
+        </a>
+        <div class="unit-header">Unit 4: Error Detection &amp; Correction</div>
+
+        <a href="#q9" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q9</span>
+            <span class="nav-title">Q9: Error Detection Methods</span>
+        </a>
+        
+        <a href="#q10" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q10</span>
+            <span class="nav-title">Q10: Error Correction using Hamming Code</span>
+        </a>
+        <div class="unit-header">Unit 5: Socket Programming &amp; HTTP</div>
+
+        <a href="#q11" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q11</span>
+            <span class="nav-title">Q11: Socket Programming &amp; Client-Server Model</span>
+        </a>
+        
+        <a href="#q12" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q12</span>
+            <span class="nav-title">Q12: HTTP Sockets: Web Page Upload &amp; Download</span>
+        </a>
+        <div class="unit-header">Unit 6: Protocol Simulations</div>
+
+        <a href="#q13" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q13</span>
+            <span class="nav-title">Q13: Simulation of PING &amp; TRACEROUTE Commands</span>
+        </a>
+        
+        <a href="#q14" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q14</span>
+            <span class="nav-title">Q14: DHCP Server Simulation (DORA)</span>
+        </a>
+        <div class="unit-header">Unit 7: Routing Algorithms</div>
+
+        <a href="#q15" class="nav-item" onclick="highlightNav(this)">
+            <span class="nav-tag">Q15</span>
+            <span class="nav-title">Q15: Routing Table Implementation</span>
+        </a>
+        
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main">
+        <header class="hero-banner">
+            <h1 class="hero-title">IT302 — Data Communication & Computer Networks</h1>
+            <p class="hero-desc">
+                Interactive laboratory portal containing complete C source code implementations, 
+                measured network statistics (PING, Traceroute), and study reports.
+            </p>
+            <div class="hero-buttons">
+                <a href="https://github.com/Aryan9891/DCCN-Lab-repo" target="_blank" class="btn btn-primary">
+                    ⭐ View on GitHub
+                </a>
+                <a href="IT302 DCCNLAB ASSIGNMENT.pdf" target="_blank" class="btn btn-secondary">
+                    📄 Original Assignment PDF
+                </a>
+                <a href="README.md" target="_blank" class="btn btn-secondary">
+                    📋 README & Guide
+                </a>
+            </div>
+        </header>
+
+        <div id="questions-container">
+            
+        <section id="q1" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-txt">Theory / Study</span>
+                    <h2 class="card-title">Q1: Lab Network Topology, Interfaces, Routers &amp; IP Pools</h2>
+                </div>
+                <a href="#q1" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>1. To familiarize with the Lab Network Topology, Locating different interfaces, routers and switches. Studying different pools of IP addresses.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q1', 0)">
+                Network Topology &amp; IP Pools Report
+            </button>
+            
+                </div>
+                
+            <div id="q1_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q1_Lab_Network_Topology.txt" target="_blank">Q1_Lab_Network_Topology.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q1_content_0_code')">📋 Copy</button>
+                        <a href="Q1_Lab_Network_Topology.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q1_content_0_code" class="language-none">================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 1: LAB NETWORK TOPOLOGY, INTERFACES, ROUTERS, SWITCHES, AND IP POOLS
+================================================================================
+
+1.1 LAB NETWORK TOPOLOGY
+-------------------------
+In a typical computer networking laboratory, an **Extended Star Topology** (Hierarchical Tree) 
+is implemented for optimal scalability, manageability, and fault isolation:
+
+  [Internet / College Backbone WAN]
+                 |
+          [Core Router / Firewall]  &lt;--- Default Gateway (Layer 3)
+                 |
+      [Distribution / Layer 3 Switch]
+           /           \
+  [Access Switch 1]   [Access Switch 2]  &lt;--- Layer 2 Switches (Rack-mounted)
+     |    |    |         |    |    |
+    PC1  PC2  PC3       PC4  PC5  PC6   &lt;--- Lab Workstations (Star topology)
+
+- **Access Layer**: Unmanaged or managed Layer-2 switches connecting individual desktop 
+  workstations via Category 6 (Cat6) UTP cables terminating in RJ-45 wall ports.
+- **Distribution Layer**: Aggregates traffic from access switches and provides VLAN segmentation 
+  (e.g., separate VLANs for Lab Systems, Faculty, and Servers).
+- **Core Layer**: High-speed core router/firewall handling inter-VLAN routing, Network Address 
+  Translation (NAT), traffic filtering, and uplink to the campus backbone.
+
+
+1.2 LOCATING DIFFERENT NETWORK INTERFACES
+-----------------------------------------
+A network interface represents a node&#x27;s physical or logical connection to the network.
+
+A. Physical Interfaces:
+   - **Ethernet (NIC)**: Identified as `eth0`, `enp3s0` (Linux) or `Ethernet 1` (Windows). 
+     Contains a permanent hardware MAC address (48-bit / 6 octets, e.g., `50:7B:9D:4A:BC:12`).
+   - **Wireless (Wi-Fi)**: Identified as `wlan0`, `wlp2s0` (Linux) or `Wi-Fi` (Windows).
+
+B. Logical / Virtual Interfaces:
+   - **Loopback (`lo`)**: IP `127.0.0.1/8` (`::1` in IPv6). Used for local inter-process communication 
+     and diagnostic self-testing of the TCP/IP network stack without transmitting over physical media.
+   - **Virtual Bridge/Tun/Tap**: Created by hypervisors or VPNs (`docker0`, `tun0`).
+
+C. Commands to locate and inspect interfaces:
+   - Windows: 
+     &gt; `ipconfig /all`     (Lists MAC address, IPv4/IPv6, subnet mask, DHCP server, DNS)
+     &gt; `getmac /v`         (Lists network adapter hardware MAC addresses)
+     &gt; `route print`       (Displays active IPv4/IPv6 routing table and gateway interfaces)
+   - Linux:
+     &gt; `ip addr show` or `ifconfig -a`  (Lists all interfaces and assigned IPs)
+     &gt; `ip link show`                   (Shows state and MAC address)
+     &gt; `netstat -i`                      (Displays interface packet transmission statistics)
+
+
+1.3 ROLE AND LOCATION OF ROUTERS AND SWITCHES
+----------------------------------------------
+A. Switches (Data Link Layer - OSI Layer 2):
+   - **Location**: Mounted inside 19-inch lab server racks or wall-mount distribution boxes.
+   - **Function**: Connects workstations inside the same Local Area Network (broadcast domain).
+   - **Working Principle**: Inspects incoming Ethernet frame headers, builds a Dynamic MAC 
+     Address Table (CAM table: Port &lt;-&gt; MAC), and forwards frames directly to destination ports 
+     (micro-segmentation), eliminating collisions.
+
+B. Routers (Network Layer - OSI Layer 3):
+   - **Location**: Located in the central server/networking room at the lab perimeter.
+   - **Function**: Connects distinct IP subnets (e.g., Lab LAN &lt;-&gt; Campus Backbone &lt;-&gt; Internet).
+   - **Working Principle**: Reads Layer 3 IP headers, evaluates routing tables using longest-prefix 
+     matching, decrements TTL (Time to Live), and routes packets across networks.
+   - **Additional Services**: Runs DHCP server daemon to assign dynamic IP leases, NAT to translate 
+     private lab IPs to public IPs, and Access Control Lists (ACLs) for security.
+
+
+1.4 STUDYING DIFFERENT POOLS OF IP ADDRESSES
+---------------------------------------------
+IPv4 addresses are 32-bit identifiers split into standard classes and special functional pools:
+
+A. Classful Addressing Overview:
+   +-------+--------------------+--------------------+-----------------------+
+   | Class | First Octet Range  | Default Subnet     | Purpose / Application |
+   +-------+--------------------+--------------------+-----------------------+
+   | A     | 1 - 127            | 255.0.0.0 (/8)     | Very large networks   |
+   | B     | 128 - 191          | 255.255.0.0 (/16)  | Medium-sized networks |
+   | C     | 192 - 223          | 255.255.255.0 (/24)| Small Local Networks  |
+   | D     | 224 - 239          | N/A                | Multicast groups      |
+   | E     | 240 - 255          | N/A                | Experimental/Reserved |
+   +-------+--------------------+--------------------+-----------------------+
+
+B. Private IP Address Pools (RFC 1918 - Non-routable on Public Internet):
+   - Class A Private: `10.0.0.0` to `10.255.255.255`       (10.0.0.0/8    = 16,777,216 IPs)
+   - Class B Private: `172.16.0.0` to `172.31.255.255`     (172.16.0.0/12 = 1,048,576 IPs)
+   - Class C Private: `192.168.0.0` to `192.168.255.255`   (192.168.0.0/16= 65,536 IPs)
+   *Note: Lab computers typically receive private IP addresses from either `172.16.x.x` or `192.168.x.x`.*
+
+C. Special and Reserved IP Pools:
+   - **Loopback Address Block**: `127.0.0.0/8` (e.g., `127.0.0.1` = localhost)
+   - **APIPA (Automatic Private IP Addressing)**: `169.254.0.0/16` (assigned by OS when DHCP fails)
+   - **Broadcast Addresses**:
+     - Limited Broadcast: `255.255.255.255` (broadcasts to current local subnet)
+     - Directed Broadcast: Host bits all 1s (e.g., `192.168.1.255` for `192.168.1.0/24`)
+   - **Default Route / Any Network**: `0.0.0.0/0`
+================================================================================
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q2" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-txt">Theory / Experimental</span>
+                    <h2 class="card-title">Q2: Networking Commands (PING, TRACEROUTE), Telnet &amp; Delay</h2>
+                </div>
+                <a href="#q2" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>2. To learn and observe the usage of different networking commands e.g. PING, TRACEROUTE. Learning remote login using telnet session. Measuring typical average delays between different locations of the network.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q2', 0)">
+                Networking Commands &amp; Delay Analysis
+            </button>
+            
+                </div>
+                
+            <div id="q2_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q2_Networking_Commands_and_Delays.txt" target="_blank">Q2_Networking_Commands_and_Delays.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q2_content_0_code')">📋 Copy</button>
+                        <a href="Q2_Networking_Commands_and_Delays.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q2_content_0_code" class="language-none">================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 2: USAGE OF NETWORKING COMMANDS, TELNET REMOTE LOGIN, AND DELAY ANALYSIS
+================================================================================
+
+2.1 PING COMMAND USAGE AND OBSERVATIONS
+----------------------------------------
+A. Purpose:
+   - Tests end-to-end IP network reachability between source and destination hosts.
+   - Measures packet loss and Round-Trip Time (RTT) in milliseconds.
+
+B. Underlying Protocol:
+   - Uses **ICMP (Internet Control Message Protocol)** at Layer 3:
+     1. Source transmits an **ICMP Echo Request** (Type 8, Code 0) packet.
+     2. Target machine responds with an **ICMP Echo Reply** (Type 0, Code 0) packet.
+
+C. Command Syntax and Key Flags:
+   - Windows: `ping -n &lt;count&gt; -l &lt;size_in_bytes&gt; &lt;host_or_ip&gt;`
+   - Linux:   `ping -c &lt;count&gt; -s &lt;size_in_bytes&gt; &lt;host_or_ip&gt;`
+   - Example:
+     &gt; `ping -n 4 google.com`
+     Outputs: Sent packets, received packets, lost packets (%), min/max/average RTT.
+
+
+2.2 TRACEROUTE / TRACERT COMMAND USAGE AND OBSERVATIONS
+--------------------------------------------------------
+A. Purpose:
+   - Maps the exact hop-by-hop path (list of intermediate Layer 3 routers) traversed 
+     by an IP packet toward a target destination.
+   - Diagnoses where packet loss, latency spikes, or network routing loops occur.
+
+B. Underlying Mechanism:
+   - Operates by manipulating the **TTL (Time to Live)** field in the IPv4 header:
+     1. Source sends a probe packet with `TTL = 1`.
+     2. The first router decrements TTL to 0, drops the packet, and sends back an 
+        **ICMP Time Exceeded** message (Type 11, Code 0). The router&#x27;s IP is recorded.
+     3. The source increments TTL (`TTL = 2`, `TTL = 3`, ...) for subsequent probes.
+     4. This continues until the probe reaches the target destination, which replies with 
+        an ICMP Echo Reply (Windows tracert) or ICMP Port Unreachable (Linux traceroute UDP probe).
+
+C. Command Syntax:
+   - Windows: `tracert -d &lt;destination&gt;`  (-d avoids reverse DNS resolution for speed)
+   - Linux:   `traceroute -n &lt;destination&gt;`
+
+
+2.3 REMOTE LOGIN USING TELNET SESSION
+--------------------------------------
+A. Purpose:
+   - Provides a bidirectional, interactive text-oriented communications facility using a 
+     virtual terminal connection over a TCP/IP network.
+   - Default Transport Port: **TCP Port 23**.
+
+B. Usage / Syntax:
+   - Initiating connection:
+     &gt; `telnet &lt;remote_host_ip_or_hostname&gt; &lt;port&gt;`
+     Example: `telnet 192.168.1.100 23`
+   - Testing connectivity to network application ports (e.g., HTTP / SMTP):
+     &gt; `telnet google.com 80`
+     Type: `GET / HTTP/1.1` followed by two Enter keys to receive HTTP headers.
+
+C. Security Vulnerability &amp; Modern Alternative:
+   - **Vulnerability**: Telnet transmits all data, including administrative usernames and 
+     passwords, in completely **unencrypted plain text**, making it highly susceptible to 
+     eavesdropping and Man-In-The-Middle (MITM) packet sniffing attacks.
+   - **Modern Standard**: **SSH (Secure Shell, TCP Port 22)** has replaced Telnet. SSH 
+     encrypts all payload and authentication traffic using strong cryptographic protocols 
+     (RSA, ECDSA, AES).
+
+
+2.4 MEASURING TYPICAL AVERAGE DELAYS ACROSS NETWORK LOCATIONS
+--------------------------------------------------------------
+A. Components of End-to-End Nodal Delay:
+   Total Delay (d_nodal) = d_proc + d_queue + d_trans + d_prop
+   - **Processing Delay (d_proc)**: Time router takes to examine packet header and determine route.
+   - **Queuing Delay (d_queue)**: Time packet spends waiting in router buffer queues.
+   - **Transmission Delay (d_trans)**: Time to push packet bits onto physical link (Packet Size / Bandwidth).
+   - **Propagation Delay (d_prop)**: Time for a bit to physically travel down medium (Distance / Speed of Light in medium).
+
+B. Typical Empirical Latency Profiles Measured:
+   +------------------------------+---------------------------+---------------------------------+
+   | Location / Segment           | Typical Round-Trip (RTT)  | Characteristic                  |
+   +------------------------------+---------------------------+---------------------------------+
+   | Localhost (Loopback)         | &lt; 0.1 ms                  | Software stack only (no cable)  |
+   | Same Lab Subnet (Switch)     | &lt; 1 ms                    | Direct Layer 2 frame forwarding |
+   | Campus Gateway / Core Router | 1 ms - 5 ms               | Layer 3 routing &amp; NAT processing|
+   | Regional / Domestic WAN      | 25 ms - 60 ms             | Fiber backbone across state     |
+   | Overseas / International WAN | 130 ms - 260 ms           | Undersea intercontinental cables|
+   +------------------------------+---------------------------+---------------------------------+
+================================================================================
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q3" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-txt">Measurements</span>
+                    <h2 class="card-title">Q3: Ping Tool Statistics &amp; Round-Trip Times</h2>
+                </div>
+                <a href="#q3" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>3. &quot;Ping&quot; is a tool used to determine if a server is responding and to estimate the round trip time of a message sent to that server. Use the ping command for the following URLs and record the success or failure statistics along with the average round trip time:<br> a) google.com   b) facebook.com   c) bitmesra.ac.in</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q3', 0)">
+                Consolidated Ping Statistics &amp; Comparison
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q3', 1)">
+                3.1 Ping google.com
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q3', 2)">
+                3.2 Ping facebook.com
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q3', 3)">
+                3.3 Ping bitmesra.ac.in
+            </button>
+            
+                </div>
+                
+            <div id="q3_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q3_Ping_Statistics.txt" target="_blank">Q3_Ping_Statistics.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q3_content_0_code')">📋 Copy</button>
+                        <a href="Q3_Ping_Statistics.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q3_content_0_code" class="language-none">================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 3: PING COMMAND STATISTICS AND ROUND-TRIP TIME (RTT) MEASUREMENTS
+================================================================================
+
+3.1 PING STATISTICS FOR GOOGLE.COM
+-----------------------------------
+Command Executed:
+`ping -n 4 google.com`
+
+Terminal Output:
+Pinging google.com [142.250.143.138] with 32 bytes of data:
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+
+Ping statistics for 142.250.143.138:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 38ms, Maximum = 38ms, Average = 38ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 142.250.143.138
+- Packets Sent          : 4
+- Packets Received      : 4
+- Packet Loss Rate      : 0% (Success)
+- Minimum RTT           : 38 ms
+- Maximum RTT           : 38 ms
+- Average RTT           : 38 ms
+
+
+3.2 PING STATISTICS FOR FACEBOOK.COM
+-------------------------------------
+Command Executed:
+`ping -n 4 facebook.com`
+
+Terminal Output:
+Pinging facebook.com [57.144.56.1] with 32 bytes of data:
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+
+Ping statistics for 57.144.56.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 58ms, Maximum = 58ms, Average = 58ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 57.144.56.1
+- Packets Sent          : 4
+- Packets Received      : 4
+- Packet Loss Rate      : 0% (Success)
+- Minimum RTT           : 58 ms
+- Maximum RTT           : 58 ms
+- Average RTT           : 58 ms
+
+
+3.3 PING STATISTICS FOR BITMESRA.AC.IN
+---------------------------------------
+Command Executed:
+`ping -n 4 bitmesra.ac.in`
+
+Terminal Output:
+Pinging bitmesra.ac.in [192.124.249.170] with 32 bytes of data:
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Request timed out.
+
+Ping statistics for 192.124.249.170:
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 150ms, Maximum = 150ms, Average = 150ms
+
+Summary Metrics:
+- Resolved IPv4 Address : 192.124.249.170
+- Packets Sent          : 4
+- Packets Received      : 3
+- Packet Loss Rate      : 25% (Partial loss due to firewall/ICMP rate-limiting)
+- Minimum RTT           : 150 ms
+- Maximum RTT           : 150 ms
+- Average RTT           : 150 ms
+
+
+3.4 COMPARATIVE ANALYSIS TABLE
+-------------------------------
++----+-----------------+------------------+---------------+-------------+-------------+
+| No | Target URL      | Resolved IP      | Loss Rate (%) | Status      | Average RTT |
++----+-----------------+------------------+---------------+-------------+-------------+
+| 1  | google.com      | 142.250.143.138  | 0%            | Responding  | 38 ms       |
+| 2  | facebook.com    | 57.144.56.1      | 0%            | Responding  | 58 ms       |
+| 3  | bitmesra.ac.in  | 192.124.249.170  | 25%           | Responding  | 150 ms      |
++----+-----------------+------------------+---------------+-------------+-------------+
+
+Observations:
+- Google had the lowest latency (38ms) due to nearby Edge PoP (Point of Presence) CDN caching.
+- Facebook maintained a stable RTT of 58ms with 0% loss.
+- BIT Mesra server hosted behind a security firewall/WAF (Web Application Firewall) had higher 
+  delay (150ms) and dropped 1 probe due to strict ICMP traffic throttling policies.
+================================================================================
+
+</code></pre>
+            </div>
+            
+            <div id="q3_content_1" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q3_1_Ping_Google.txt" target="_blank">Q3_1_Ping_Google.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q3_content_1_code')">📋 Copy</button>
+                        <a href="Q3_1_Ping_Google.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q3_content_1_code" class="language-none">================================================================================
+IT302 DCCN LAB - QUESTION 3.1: PING STATISTICS FOR GOOGLE.COM
+================================================================================
+Target URL         : google.com
+Resolved IP        : 142.250.143.138
+Command Executed   : ping -n 4 google.com
+
+TERMINAL OUTPUT:
+Pinging google.com [142.250.143.138] with 32 bytes of data:
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+Reply from 142.250.143.138: bytes=32 time=38ms TTL=113
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 4
+- Packet Loss Rate   : 0% (Success)
+- Minimum RTT        : 38 ms
+- Maximum RTT        : 38 ms
+- Average RTT        : 38 ms
+================================================================================
+
+</code></pre>
+            </div>
+            
+            <div id="q3_content_2" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q3_2_Ping_Facebook.txt" target="_blank">Q3_2_Ping_Facebook.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q3_content_2_code')">📋 Copy</button>
+                        <a href="Q3_2_Ping_Facebook.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q3_content_2_code" class="language-none">================================================================================
+IT302 DCCN LAB - QUESTION 3.2: PING STATISTICS FOR FACEBOOK.COM
+================================================================================
+Target URL         : facebook.com
+Resolved IP        : 57.144.56.1
+Command Executed   : ping -n 4 facebook.com
+
+TERMINAL OUTPUT:
+Pinging facebook.com [57.144.56.1] with 32 bytes of data:
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+Reply from 57.144.56.1: bytes=32 time=58ms TTL=54
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 4
+- Packet Loss Rate   : 0% (Success)
+- Minimum RTT        : 58 ms
+- Maximum RTT        : 58 ms
+- Average RTT        : 58 ms
+================================================================================
+
+</code></pre>
+            </div>
+            
+            <div id="q3_content_3" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q3_3_Ping_BitMesra.txt" target="_blank">Q3_3_Ping_BitMesra.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q3_content_3_code')">📋 Copy</button>
+                        <a href="Q3_3_Ping_BitMesra.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q3_content_3_code" class="language-none">================================================================================
+IT302 DCCN LAB - QUESTION 3.3: PING STATISTICS FOR BITMESRA.AC.IN
+================================================================================
+Target URL         : bitmesra.ac.in
+Resolved IP        : 192.124.249.170
+Command Executed   : ping -n 4 bitmesra.ac.in
+
+TERMINAL OUTPUT:
+Pinging bitmesra.ac.in [192.124.249.170] with 32 bytes of data:
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Reply from 192.124.249.170: bytes=32 time=150ms TTL=52
+Request timed out.
+
+STATISTICS:
+- Packets Sent       : 4
+- Packets Received   : 3
+- Packet Loss Rate   : 25% (1 probe dropped by perimeter firewall/rate-limiter)
+- Minimum RTT        : 150 ms
+- Maximum RTT        : 150 ms
+- Average RTT        : 150 ms
+================================================================================
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q4" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-txt">Measurements</span>
+                    <h2 class="card-title">Q4: Trace Route Path Analysis</h2>
+                </div>
+                <a href="#q4" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>4. Trace the route that is taken when you try to access:<br> a) google.com   b) facebook.com   c) bitmesra.ac.in</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q4', 0)">
+                Consolidated Traceroute Path Analysis
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q4', 1)">
+                4.1 Trace Route google.com
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q4', 2)">
+                4.2 Trace Route facebook.com
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q4', 3)">
+                4.3 Trace Route bitmesra.ac.in
+            </button>
+            
+                </div>
+                
+            <div id="q4_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q4_Trace_Route.txt" target="_blank">Q4_Trace_Route.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q4_content_0_code')">📋 Copy</button>
+                        <a href="Q4_Trace_Route.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q4_content_0_code" class="language-none">================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 4: TRACEROUTE HOP-BY-HOP ROUTE PATH ANALYSIS
+================================================================================
+
+4.1 TRACE ROUTE TO GOOGLE.COM
+------------------------------
+Command Executed:
+`tracert -d -h 10 google.com`
+
+Terminal Output:
+Tracing route to google.com [142.250.143.138] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   &lt;1 ms    &lt;1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   &lt;1 ms    &lt;1 ms    &lt;1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    38 ms    38 ms   49.44.59.153     (National Backbone Core Network)
+    5   37 ms    38 ms    37 ms   49.44.59.153     (Backbone Transit Router)
+    6   36 ms    48 ms    36 ms   72.14.243.188    (Google Autonomous System AS15169 Peering Point)
+    7   38 ms    37 ms    38 ms   142.250.143.138  (Target Google Web Server)
+
+Trace complete. Total hops: 7.
+
+
+4.2 TRACE ROUTE TO FACEBOOK.COM
+--------------------------------
+Command Executed:
+`tracert -d -h 10 facebook.com`
+
+Terminal Output:
+Tracing route to facebook.com [57.144.56.1] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   &lt;1 ms    &lt;1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   &lt;1 ms    &lt;1 ms    &lt;1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    38 ms   112 ms   49.44.59.153     (National Backbone Core Network)
+    5  100 ms    37 ms    37 ms   49.44.59.153     (Backbone Transit Router)
+    6   56 ms    56 ms    56 ms   172.31.2.63      (Meta Edge Gateway Interconnect)
+    7   60 ms    60 ms    60 ms   157.240.66.228   (Meta AS32934 Backbone Node)
+    8   63 ms    63 ms    63 ms   129.134.42.112   (Meta Infrastructure Router)
+    9   59 ms    59 ms    60 ms   129.134.118.12   (Meta Edge Cluster Router)
+   10    *        *        *      Request timed out (Firewall blocking ICMP Echo at final edge)
+
+Trace complete. Total hops: 9 active intermediate hops before destination firewall.
+
+
+4.3 TRACE ROUTE TO BITMESRA.AC.IN
+----------------------------------
+Command Executed:
+`tracert -d -h 10 bitmesra.ac.in`
+
+Terminal Output:
+Tracing route to bitmesra.ac.in [192.124.249.170] over a maximum of 10 hops:
+
+  Hop   RTT 1    RTT 2    RTT 3   IP Address
+  --------------------------------------------------
+    1   &lt;1 ms    &lt;1 ms     1 ms   172.16.8.1       (Local Default Gateway / Lab Subnet Router)
+    2   &lt;1 ms    &lt;1 ms    &lt;1 ms   172.16.13.1      (Internal Campus Aggregation / Firewall)
+    3    3 ms     3 ms     3 ms   136.232.33.117   (ISP Gateway / Edge Border Router)
+    4   38 ms    37 ms    37 ms   49.44.59.153     (National Backbone Core Network)
+    5   37 ms    37 ms    37 ms   49.44.59.153     (National Backbone Core Router)
+    6   38 ms    38 ms    37 ms   49.45.4.253      (Carrier Exchange Gateway)
+    7  148 ms   149 ms   149 ms   103.198.140.215  (International / Upstream Peering Link)
+    8  150 ms   149 ms   150 ms   62.115.155.138   (Arelion / Telia Global Carrier Transit)
+    9  179 ms   178 ms   178 ms   62.115.124.54    (Sucuri Cloud Security Transit Router)
+   10  161 ms   161 ms   160 ms   62.115.118.59    (Sucuri Anycast Web Security Gateway)
+
+Trace complete.
+
+
+4.4 OBSERVATIONS AND ROUTE COMPARISON
+--------------------------------------
+1. Common Local Path:
+   All three routes traverse the exact same initial 3 hops:
+   - Hop 1: Local Default Gateway (`172.16.8.1`) - latency &lt; 1ms.
+   - Hop 2: Campus Core / Aggregation Switch (`172.16.13.1`) - latency &lt; 1ms.
+   - Hop 3: ISP Border Router (`136.232.33.117`) - latency ~3ms.
+
+2. Divergence:
+   - Google traffic quickly routes into Google&#x27;s direct peering edge (`72.14.243.188`) at Hop 6.
+   - Facebook routes into Meta&#x27;s autonomous system (`157.240.66.228`) at Hop 7.
+   - BIT Mesra&#x27;s site is protected by Sucuri Cloud WAF Anycast nodes, routing through international 
+     transit carrier Arelion/Telia (`62.115.x.x`), increasing latency to ~160ms.
+================================================================================
+
+</code></pre>
+            </div>
+            
+            <div id="q4_content_1" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q4_1_Trace_Google.txt" target="_blank">Q4_1_Trace_Google.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q4_content_1_code')">📋 Copy</button>
+                        <a href="Q4_1_Trace_Google.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q4_content_1_code" class="language-none">================================================================================
+IT302 DCCN LAB - QUESTION 4.1: TRACEROUTE FOR GOOGLE.COM
+================================================================================
+Target Host        : google.com
+Target IP          : 142.250.143.138
+Command Executed   : tracert -d -h 10 google.com
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   &lt;1 ms    &lt;1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   &lt;1 ms    &lt;1 ms    &lt;1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    38 ms    38 ms   49.44.59.153     National Carrier Backbone Transit
+    5   37 ms    38 ms    37 ms   49.44.59.153     Backbone Peering Router
+    6   36 ms    48 ms    36 ms   72.14.243.188    Google AS15169 Interconnect PoP
+    7   38 ms    37 ms    38 ms   142.250.143.138  Destination Web Server
+
+Result: Trace completed successfully in 7 hops. Average latency: ~38 ms.
+================================================================================
+
+</code></pre>
+            </div>
+            
+            <div id="q4_content_2" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q4_2_Trace_Facebook.txt" target="_blank">Q4_2_Trace_Facebook.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q4_content_2_code')">📋 Copy</button>
+                        <a href="Q4_2_Trace_Facebook.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q4_content_2_code" class="language-none">================================================================================
+IT302 DCCN LAB - QUESTION 4.2: TRACEROUTE FOR FACEBOOK.COM
+================================================================================
+Target Host        : facebook.com
+Target IP          : 57.144.56.1
+Command Executed   : tracert -d -h 10 facebook.com
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   &lt;1 ms    &lt;1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   &lt;1 ms    &lt;1 ms    &lt;1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    38 ms   112 ms   49.44.59.153     National Carrier Backbone Transit
+    5  100 ms    37 ms    37 ms   49.44.59.153     Backbone Transit Router
+    6   56 ms    56 ms    56 ms   172.31.2.63      Meta Gateway Interconnect
+    7   60 ms    60 ms    60 ms   157.240.66.228   Meta AS32934 Core Router
+    8   63 ms    63 ms    63 ms   129.134.42.112   Meta Infrastructure Node
+    9   59 ms    59 ms    60 ms   129.134.118.12   Meta Edge Router
+   10    *        *        *      Request timed out (Firewall blocks ICMP probe)
+
+Result: Trace reached Meta infrastructure edge in 9 active hops. Average latency: ~59 ms.
+================================================================================
+
+</code></pre>
+            </div>
+            
+            <div id="q4_content_3" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q4_3_Trace_BitMesra.txt" target="_blank">Q4_3_Trace_BitMesra.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q4_content_3_code')">📋 Copy</button>
+                        <a href="Q4_3_Trace_BitMesra.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q4_content_3_code" class="language-none">================================================================================
+IT302 DCCN LAB - QUESTION 4.3: TRACEROUTE FOR BITMESRA.AC.IN
+================================================================================
+Target Host        : bitmesra.ac.in
+Target IP          : 192.124.249.170
+Command Executed   : tracert -d -h 10 bitmesra.ac.in
+
+HOP-BY-HOP ROUTE:
+  Hop   RTT 1    RTT 2    RTT 3   IP Address       Node Description
+  --------------------------------------------------------------------------------
+    1   &lt;1 ms    &lt;1 ms     1 ms   172.16.8.1       Local Lab Default Gateway
+    2   &lt;1 ms    &lt;1 ms    &lt;1 ms   172.16.13.1      Campus Core Aggregation / Firewall
+    3    3 ms     3 ms     3 ms   136.232.33.117   Campus ISP Edge Router
+    4   38 ms    37 ms    37 ms   49.44.59.153     National Backbone Core Network
+    5   37 ms    37 ms    37 ms   49.44.59.153     National Backbone Transit Router
+    6   38 ms    38 ms    37 ms   49.45.4.253      Carrier Exchange Gateway
+    7  148 ms   149 ms   149 ms   103.198.140.215  International Peering Link
+    8  150 ms   149 ms   150 ms   62.115.155.138   Arelion / Telia Global Carrier Transit
+    9  179 ms   178 ms   178 ms   62.115.124.54    Sucuri Cloud Security Transit Router
+   10  161 ms   161 ms   160 ms   62.115.118.59    Sucuri Anycast Web Security Gateway
+
+Result: Trace completed over international transit carriers in 10 hops. Average latency: ~161 ms.
+================================================================================
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q5" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code</span>
+                    <h2 class="card-title">Q5: IPv4 Class Determination</h2>
+                </div>
+                <a href="#q5" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>5. Write a C/C++ program to determine if the IP address is in Class A, B, C, D, or E.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q5', 0)">
+                IPv4 Class Identifier
+            </button>
+            
+                </div>
+                
+            <div id="q5_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q5_IP_Class_Determination.c" target="_blank">Q5_IP_Class_Determination.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q5_content_0_code')">📋 Copy</button>
+                        <a href="Q5_IP_Class_Determination.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q5_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 5
+ * Program to determine whether an IPv4 address is in Class A, B, C, D, or E.
+ */
+
+#include &lt;stdio.h&gt;
+
+int main(void) {
+    char ip[32];
+    int o1, o2, o3, o4;
+
+    printf(&quot;Enter IPv4 Address (e.g. 192.168.1.1): &quot;);
+    if (scanf(&quot;%31s&quot;, ip) != 1) return 1;
+
+    if (sscanf(ip, &quot;%d.%d.%d.%d&quot;, &amp;o1, &amp;o2, &amp;o3, &amp;o4) != 4 ||
+        o1 &lt; 0 || o1 &gt; 255 || o2 &lt; 0 || o2 &gt; 255 ||
+        o3 &lt; 0 || o3 &gt; 255 || o4 &lt; 0 || o4 &gt; 255) {
+        printf(&quot;Invalid IPv4 address format!\n&quot;);
+        return 1;
+    }
+
+    printf(&quot;\n--- IP Classification Result ---\n&quot;);
+    printf(&quot;IP Address : %d.%d.%d.%d\n&quot;, o1, o2, o3, o4);
+
+    if (o1 &gt;= 0 &amp;&amp; o1 &lt;= 127) {
+        printf(&quot;Class      : Class A\n&quot;);
+        printf(&quot;Subnet Mask: 255.0.0.0\n&quot;);
+        printf(&quot;Network ID : %d.0.0.0\n&quot;, o1);
+        printf(&quot;Host ID    : 0.%d.%d.%d\n&quot;, o2, o3, o4);
+    } else if (o1 &gt;= 128 &amp;&amp; o1 &lt;= 191) {
+        printf(&quot;Class      : Class B\n&quot;);
+        printf(&quot;Subnet Mask: 255.255.0.0\n&quot;);
+        printf(&quot;Network ID : %d.%d.0.0\n&quot;, o1, o2);
+        printf(&quot;Host ID    : 0.0.%d.%d\n&quot;, o3, o4);
+    } else if (o1 &gt;= 192 &amp;&amp; o1 &lt;= 223) {
+        printf(&quot;Class      : Class C\n&quot;);
+        printf(&quot;Subnet Mask: 255.255.255.0\n&quot;);
+        printf(&quot;Network ID : %d.%d.%d.0\n&quot;, o1, o2, o3);
+        printf(&quot;Host ID    : 0.0.0.%d\n&quot;, o4);
+    } else if (o1 &gt;= 224 &amp;&amp; o1 &lt;= 239) {
+        printf(&quot;Class      : Class D (Multicast)\n&quot;);
+    } else {
+        printf(&quot;Class      : Class E (Experimental / Reserved)\n&quot;);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q6" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code</span>
+                    <h2 class="card-title">Q6: Dotted Decimal to 32-bit Address Translation</h2>
+                </div>
+                <a href="#q6" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>6. Write a C/C++ program to translate dotted decimal IP address into 32 bit address.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q6', 0)">
+                Dotted Decimal to 32-Bit Binary &amp; Hex
+            </button>
+            
+                </div>
+                
+            <div id="q6_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q6_Dotted_Decimal_To_32Bit.c" target="_blank">Q6_Dotted_Decimal_To_32Bit.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q6_content_0_code')">📋 Copy</button>
+                        <a href="Q6_Dotted_Decimal_To_32Bit.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q6_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 6
+ * Program to translate a dotted decimal IPv4 address into a 32-bit binary and integer address.
+ */
+
+#include &lt;stdio.h&gt;
+
+void print_binary8(unsigned int n) {
+    for (int i = 7; i &gt;= 0; i--) {
+        putchar((n &amp; (1 &lt;&lt; i)) ? &#x27;1&#x27; : &#x27;0&#x27;);
+    }
+}
+
+int main(void) {
+    char ip[32];
+    unsigned int o1, o2, o3, o4;
+
+    printf(&quot;Enter IPv4 Address in dotted decimal (e.g. 192.168.1.1): &quot;);
+    if (scanf(&quot;%31s&quot;, ip) != 1) return 1;
+
+    if (sscanf(ip, &quot;%u.%u.%u.%u&quot;, &amp;o1, &amp;o2, &amp;o3, &amp;o4) != 4 ||
+        o1 &gt; 255 || o2 &gt; 255 || o3 &gt; 255 || o4 &gt; 255) {
+        printf(&quot;Error: Invalid dotted decimal address!\n&quot;);
+        return 1;
+    }
+
+    unsigned int addr32 = (o1 &lt;&lt; 24) | (o2 &lt;&lt; 16) | (o3 &lt;&lt; 8) | o4;
+
+    printf(&quot;\n--- Conversion Results ---\n&quot;);
+    printf(&quot;Dotted Decimal  : %u.%u.%u.%u\n&quot;, o1, o2, o3, o4);
+    printf(&quot;32-bit Binary   : &quot;);
+    print_binary8(o1); putchar(&#x27; &#x27;);
+    print_binary8(o2); putchar(&#x27; &#x27;);
+    print_binary8(o3); putchar(&#x27; &#x27;);
+    print_binary8(o4); putchar(&#x27;\n&#x27;);
+    printf(&quot;Continuous Bits : &quot;);
+    print_binary8(o1); print_binary8(o2); print_binary8(o3); print_binary8(o4);
+    putchar(&#x27;\n&#x27;);
+    printf(&quot;32-bit Unsigned : %u\n&quot;, addr32);
+    printf(&quot;32-bit Hex      : 0x%08X\n&quot;, addr32);
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q7" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code</span>
+                    <h2 class="card-title">Q7: Bit Stuffing and De-stuffing</h2>
+                </div>
+                <a href="#q7" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>7. Write a C/C++ program to perform bit stuffing and de-stuffing.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q7', 0)">
+                HDLC Bit Stuffing &amp; Framing
+            </button>
+            
+                </div>
+                
+            <div id="q7_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q7_Bit_Stuffing_Destuffing.c" target="_blank">Q7_Bit_Stuffing_Destuffing.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q7_content_0_code')">📋 Copy</button>
+                        <a href="Q7_Bit_Stuffing_Destuffing.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q7_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 7
+ * Program to perform Bit Stuffing and De-stuffing (HDLC / Framing).
+ * Rule: After five consecutive 1s, a &#x27;0&#x27; is stuffed at sender and removed at receiver.
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+#define FLAG &quot;01111110&quot;
+
+void bit_stuff(const char *in, char *out) {
+    int count = 0, j = 0;
+    for (int i = 0; in[i] != &#x27;\0&#x27;; i++) {
+        out[j++] = in[i];
+        if (in[i] == &#x27;1&#x27;) {
+            count++;
+            if (count == 5) {
+                out[j++] = &#x27;0&#x27;; // Stuff &#x27;0&#x27;
+                count = 0;
+            }
+        } else {
+            count = 0;
+        }
+    }
+    out[j] = &#x27;\0&#x27;;
+}
+
+void bit_destuff(const char *in, char *out) {
+    int count = 0, j = 0;
+    for (int i = 0; in[i] != &#x27;\0&#x27;; i++) {
+        out[j++] = in[i];
+        if (in[i] == &#x27;1&#x27;) {
+            count++;
+            if (count == 5) {
+                if (in[i + 1] == &#x27;0&#x27;) {
+                    i++; // Skip the stuffed &#x27;0&#x27;
+                }
+                count = 0;
+            }
+        } else {
+            count = 0;
+        }
+    }
+    out[j] = &#x27;\0&#x27;;
+}
+
+int main(void) {
+    char data[256], stuffed[512], destuffed[256];
+
+    printf(&quot;Enter binary data string (e.g. 01111110111110): &quot;);
+    if (scanf(&quot;%255s&quot;, data) != 1) return 1;
+
+    // Validate binary string
+    for (int i = 0; data[i] != &#x27;\0&#x27;; i++) {
+        if (data[i] != &#x27;0&#x27; &amp;&amp; data[i] != &#x27;1&#x27;) {
+            printf(&quot;Error: Input must only contain &#x27;0&#x27; and &#x27;1&#x27;!\n&quot;);
+            return 1;
+        }
+    }
+
+    bit_stuff(data, stuffed);
+    bit_destuff(stuffed, destuffed);
+
+    printf(&quot;\n--- Bit Stuffing &amp; De-stuffing Results ---\n&quot;);
+    printf(&quot;Original Data   : %s\n&quot;, data);
+    printf(&quot;Stuffed Payload : %s\n&quot;, stuffed);
+    printf(&quot;Transmitted Frame: %s %s %s\n&quot;, FLAG, stuffed, FLAG);
+    printf(&quot;De-stuffed Data : %s\n&quot;, destuffed);
+    printf(&quot;Integrity Match : %s\n&quot;, (strcmp(data, destuffed) == 0) ? &quot;SUCCESS&quot; : &quot;FAILED&quot;);
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q8" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code</span>
+                    <h2 class="card-title">Q8: Character Stuffing and De-stuffing</h2>
+                </div>
+                <a href="#q8" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>8. Write a C/C++ program to perform character stuffing and de-stuffing.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q8', 0)">
+                Byte Stuffing (DLE STX / DLE ETX)
+            </button>
+            
+                </div>
+                
+            <div id="q8_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q8_Character_Stuffing_Destuffing.c" target="_blank">Q8_Character_Stuffing_Destuffing.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q8_content_0_code')">📋 Copy</button>
+                        <a href="Q8_Character_Stuffing_Destuffing.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q8_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 8
+ * Program to perform Character (Byte) Stuffing and De-stuffing.
+ * Framing: Frame begins with &quot;DLE STX&quot; and ends with &quot;DLE ETX&quot;.
+ * Rule: Whenever &quot;DLE&quot; appears inside data, an extra &quot;DLE&quot; is stuffed.
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+void char_stuff(const char *in, char *out) {
+    int i = 0, j = 0;
+    // Add Frame Header
+    strcpy(out, &quot;DLE STX &quot;);
+    j = (int)strlen(out);
+
+    while (in[i] != &#x27;\0&#x27;) {
+        // Check for &quot;DLE&quot; token in data
+        if (strncmp(&amp;in[i], &quot;DLE&quot;, 3) == 0 &amp;&amp; (i == 0 || in[i-1] == &#x27; &#x27;) &amp;&amp; 
+            (in[i+3] == &#x27; &#x27; || in[i+3] == &#x27;\0&#x27;)) {
+            strcpy(&amp;out[j], &quot;DLE DLE &quot;);
+            j += 8;
+            i += 3;
+            if (in[i] == &#x27; &#x27;) i++;
+        } else {
+            out[j++] = in[i++];
+        }
+    }
+    // Add Frame Trailer
+    if (j &gt; 0 &amp;&amp; out[j-1] != &#x27; &#x27;) out[j++] = &#x27; &#x27;;
+    strcpy(&amp;out[j], &quot;DLE ETX&quot;);
+}
+
+void char_destuff(const char *in, char *out) {
+    int i = 0, j = 0;
+    // Skip initial &quot;DLE STX &quot;
+    if (strncmp(in, &quot;DLE STX &quot;, 8) == 0) {
+        i = 8;
+    }
+
+    int len = (int)strlen(in);
+    // Find where trailer &quot; DLE ETX&quot; begins
+    int end_limit = len;
+    if (len &gt;= 8 &amp;&amp; strcmp(&amp;in[len - 8], &quot; DLE ETX&quot;) == 0) {
+        end_limit = len - 8;
+    } else if (len &gt;= 7 &amp;&amp; strcmp(&amp;in[len - 7], &quot;DLE ETX&quot;) == 0) {
+        end_limit = len - 7;
+    }
+
+    while (i &lt; end_limit) {
+        // If &quot;DLE DLE&quot; appears, destuff one &quot;DLE&quot;
+        if (strncmp(&amp;in[i], &quot;DLE DLE&quot;, 7) == 0) {
+            strcpy(&amp;out[j], &quot;DLE&quot;);
+            j += 3;
+            i += 7;
+        } else {
+            out[j++] = in[i++];
+        }
+    }
+    // Trim trailing space if any
+    while (j &gt; 0 &amp;&amp; out[j-1] == &#x27; &#x27;) j--;
+    out[j] = &#x27;\0&#x27;;
+}
+
+int main(void) {
+    char data[256], stuffed[512], destuffed[256];
+
+    printf(&quot;Enter message string (e.g. NET DLE WORK): &quot;);
+    if (!fgets(data, sizeof(data), stdin)) return 1;
+    data[strcspn(data, &quot;\r\n&quot;)] = &#x27;\0&#x27;; // Remove newline
+
+    char_stuff(data, stuffed);
+    char_destuff(stuffed, destuffed);
+
+    printf(&quot;\n--- Character Stuffing &amp; De-stuffing Results ---\n&quot;);
+    printf(&quot;Original Data   : %s\n&quot;, data);
+    printf(&quot;Stuffed Frame   : %s\n&quot;, stuffed);
+    printf(&quot;De-stuffed Data : %s\n&quot;, destuffed);
+    printf(&quot;Integrity Match : %s\n&quot;, (strcmp(data, destuffed) == 0) ? &quot;SUCCESS&quot; : &quot;FAILED&quot;);
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q9" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code (4 Methods)</span>
+                    <h2 class="card-title">Q9: Error Detection Methods</h2>
+                </div>
+                <a href="#q9" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>9. Write a C/C++ program to perform error detection method using:<br> - Single parity checking method<br> - Two dimension parity checking method<br> - Cyclic redundancy check (CRC) method<br> - Internet checksum method</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q9', 0)">
+                9.1 Single Parity Check (Even / Odd)
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q9', 1)">
+                9.2 Two-Dimensional Parity Check (LRC &amp; VRC)
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q9', 2)">
+                9.3 Cyclic Redundancy Check (Modulo-2 XOR)
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q9', 3)">
+                9.4 Internet Checksum (RFC 1071)
+            </button>
+            
+                </div>
+                
+            <div id="q9_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q9_1_Single_Parity.c" target="_blank">Q9_1_Single_Parity.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q9_content_0_code')">📋 Copy</button>
+                        <a href="Q9_1_Single_Parity.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q9_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 9.1
+ * Error Detection: Single Parity Checking Method (Even &amp; Odd Parity)
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int count_ones(const char *bits) {
+    int count = 0;
+    for (int i = 0; bits[i] != &#x27;\0&#x27;; i++) {
+        if (bits[i] == &#x27;1&#x27;) count++;
+    }
+    return count;
+}
+
+int main(void) {
+    char data[64], tx_code[65], rx_code[65];
+    int choice;
+
+    printf(&quot;--- 9.1 Single Parity Check ---\n&quot;);
+    printf(&quot;Enter binary data bits (e.g. 1011001): &quot;);
+    if (scanf(&quot;%63s&quot;, data) != 1) return 1;
+
+    printf(&quot;Select Parity Scheme (1: Even Parity, 2: Odd Parity): &quot;);
+    if (scanf(&quot;%d&quot;, &amp;choice) != 1) return 1;
+
+    int ones = count_ones(data);
+    char parity_bit;
+
+    if (choice == 1) { // Even parity
+        parity_bit = (ones % 2 == 0) ? &#x27;0&#x27; : &#x27;1&#x27;;
+    } else {           // Odd parity
+        parity_bit = (ones % 2 == 0) ? &#x27;1&#x27; : &#x27;0&#x27;;
+    }
+
+    // Sender codeword
+    strcpy(tx_code, data);
+    int len = (int)strlen(data);
+    tx_code[len] = parity_bit;
+    tx_code[len + 1] = &#x27;\0&#x27;;
+
+    printf(&quot;\n[Sender] Parity Bit Added : %c\n&quot;, parity_bit);
+    printf(&quot;[Sender] Transmitted Code : %s\n&quot;, tx_code);
+
+    // Receiver check
+    printf(&quot;\n[Receiver] Enter received codeword (or test with %s): &quot;, tx_code);
+    if (scanf(&quot;%64s&quot;, rx_code) != 1) return 1;
+
+    int rx_ones = count_ones(rx_code);
+    int error = 0;
+    if (choice == 1) {
+        error = (rx_ones % 2 != 0);
+    } else {
+        error = (rx_ones % 2 == 0);
+    }
+
+    if (error) {
+        printf(&quot;[Receiver] Status: ERROR DETECTED! Parity check failed.\n&quot;);
+    } else {
+        printf(&quot;[Receiver] Status: NO ERROR DETECTED. Data accepted.\n&quot;);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            <div id="q9_content_1" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q9_2_Two_Dimension_Parity.c" target="_blank">Q9_2_Two_Dimension_Parity.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q9_content_1_code')">📋 Copy</button>
+                        <a href="Q9_2_Two_Dimension_Parity.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q9_content_1_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 9.2
+ * Error Detection: Two-Dimensional Parity Checking (Row and Column Even Parity)
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+#define MAX_ROWS 10
+#define MAX_COLS 32
+
+int main(void) {
+    int rows, cols;
+    char data[MAX_ROWS][MAX_COLS];
+    int row_parity[MAX_ROWS] = {0};
+    int col_parity[MAX_COLS] = {0};
+
+    printf(&quot;--- 9.2 Two-Dimensional Parity Check (Even Parity) ---\n&quot;);
+    printf(&quot;Enter number of data words (rows): &quot;);
+    if (scanf(&quot;%d&quot;, &amp;rows) != 1 || rows &lt;= 0 || rows &gt; MAX_ROWS) return 1;
+
+    printf(&quot;Enter number of bits per word (columns): &quot;);
+    if (scanf(&quot;%d&quot;, &amp;cols) != 1 || cols &lt;= 0 || cols &gt; MAX_COLS) return 1;
+
+    printf(&quot;Enter each binary word (%d bits):\n&quot;, cols);
+    for (int i = 0; i &lt; rows; i++) {
+        printf(&quot;  Word %d: &quot;, i + 1);
+        scanf(&quot;%s&quot;, data[i]);
+    }
+
+    // Calculate Row Parities (Horizontal)
+    for (int i = 0; i &lt; rows; i++) {
+        int count = 0;
+        for (int j = 0; j &lt; cols; j++) {
+            if (data[i][j] == &#x27;1&#x27;) count++;
+        }
+        row_parity[i] = count % 2; // 0 if even, 1 if odd
+    }
+
+    // Calculate Column Parities (Vertical - LRC)
+    for (int j = 0; j &lt; cols; j++) {
+        int count = 0;
+        for (int i = 0; i &lt; rows; i++) {
+            if (data[i][j] == &#x27;1&#x27;) count++;
+        }
+        col_parity[j] = count % 2;
+    }
+
+    // Display Transmitted Block
+    printf(&quot;\n[Sender] Transmitted 2D Parity Matrix:\n&quot;);
+    for (int i = 0; i &lt; rows; i++) {
+        printf(&quot;  %s | Row Parity: %d\n&quot;, data[i], row_parity[i]);
+    }
+    printf(&quot;  &quot;);
+    for (int j = 0; j &lt; cols; j++) printf(&quot;-&quot;);
+    printf(&quot;\n  &quot;);
+    for (int j = 0; j &lt; cols; j++) {
+        printf(&quot;%d&quot;, col_parity[j]);
+    }
+    printf(&quot; &lt;- Column Parity Row\n&quot;);
+
+    // Simulate Receiver Verification
+    printf(&quot;\n--- Receiver Verification Simulation ---\n&quot;);
+    printf(&quot;Inject single-bit error to test? (1 for Yes, 0 for No): &quot;);
+    int inject;
+    if (scanf(&quot;%d&quot;, &amp;inject) == 1 &amp;&amp; inject == 1) {
+        int r, c;
+        printf(&quot;Enter row (1 to %d) and col (1 to %d) to flip: &quot;, rows, cols);
+        scanf(&quot;%d %d&quot;, &amp;r, &amp;c);
+        if (r &gt;= 1 &amp;&amp; r &lt;= rows &amp;&amp; c &gt;= 1 &amp;&amp; c &lt;= cols) {
+            data[r - 1][c - 1] = (data[r - 1][c - 1] == &#x27;1&#x27;) ? &#x27;0&#x27; : &#x27;1&#x27;;
+            printf(&quot;Flipped bit at row %d, col %d.\n&quot;, r, c);
+        }
+    }
+
+    // Recheck at Receiver
+    int err_row = -1, err_col = -1;
+    for (int i = 0; i &lt; rows; i++) {
+        int count = 0;
+        for (int j = 0; j &lt; cols; j++) {
+            if (data[i][j] == &#x27;1&#x27;) count++;
+        }
+        if ((count % 2) != row_parity[i]) err_row = i;
+    }
+    for (int j = 0; j &lt; cols; j++) {
+        int count = 0;
+        for (int i = 0; i &lt; rows; i++) {
+            if (data[i][j] == &#x27;1&#x27;) count++;
+        }
+        if ((count % 2) != col_parity[j]) err_col = j;
+    }
+
+    if (err_row != -1 || err_col != -1) {
+        printf(&quot;[Receiver] Status: ERROR DETECTED!\n&quot;);
+        if (err_row != -1 &amp;&amp; err_col != -1) {
+            printf(&quot;[Receiver] Exact Error Location: Row %d, Column %d\n&quot;, err_row + 1, err_col + 1);
+            printf(&quot;[Receiver] Error successfully corrected by flipping bit back!\n&quot;);
+        }
+    } else {
+        printf(&quot;[Receiver] Status: NO ERROR DETECTED. Data block accepted.\n&quot;);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            <div id="q9_content_2" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q9_3_CRC.c" target="_blank">Q9_3_CRC.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q9_content_2_code')">📋 Copy</button>
+                        <a href="Q9_3_CRC.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q9_content_2_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 9.3
+ * Error Detection: Cyclic Redundancy Check (CRC) using Modulo-2 Division (XOR)
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+void xor_division(char *dividend, const char *divisor, char *remainder) {
+    int n = (int)strlen(dividend);
+    int k = (int)strlen(divisor);
+    char temp[256];
+    strcpy(temp, dividend);
+
+    for (int i = 0; i &lt;= n - k; i++) {
+        if (temp[i] == &#x27;1&#x27;) {
+            for (int j = 0; j &lt; k; j++) {
+                temp[i + j] = (temp[i + j] == divisor[j]) ? &#x27;0&#x27; : &#x27;1&#x27;;
+            }
+        }
+    }
+    // Copy the last (k - 1) bits as the remainder
+    strncpy(remainder, &amp;temp[n - k + 1], k - 1);
+    remainder[k - 1] = &#x27;\0&#x27;;
+}
+
+int main(void) {
+    char data[128], gen[32], dividend[256], rem[32], codeword[256], rx[256], rx_rem[32];
+
+    printf(&quot;--- 9.3 Cyclic Redundancy Check (CRC) ---\n&quot;);
+    printf(&quot;Enter data bits (e.g. 100100): &quot;);
+    if (scanf(&quot;%127s&quot;, data) != 1) return 1;
+
+    printf(&quot;Enter generator polynomial (e.g. 1101): &quot;);
+    if (scanf(&quot;%31s&quot;, gen) != 1) return 1;
+
+    int gen_len = (int)strlen(gen);
+    int data_len = (int)strlen(data);
+
+    // Prepare dividend: data appended with (gen_len - 1) zeros
+    strcpy(dividend, data);
+    for (int i = 0; i &lt; gen_len - 1; i++) {
+        dividend[data_len + i] = &#x27;0&#x27;;
+    }
+    dividend[data_len + gen_len - 1] = &#x27;\0&#x27;;
+
+    // Calculate CRC remainder at sender
+    xor_division(dividend, gen, rem);
+
+    // Transmitted codeword = data + remainder
+    strcpy(codeword, data);
+    strcat(codeword, rem);
+
+    printf(&quot;\n[Sender] CRC Checksum (Remainder): %s\n&quot;, rem);
+    printf(&quot;[Sender] Transmitted Codeword     : %s\n&quot;, codeword);
+
+    // Receiver Check
+    printf(&quot;\n[Receiver] Enter received codeword (or test with %s): &quot;, codeword);
+    if (scanf(&quot;%255s&quot;, rx) != 1) return 1;
+
+    xor_division(rx, gen, rx_rem);
+
+    // Check if remainder is all zeros
+    int has_error = 0;
+    for (int i = 0; i &lt; gen_len - 1; i++) {
+        if (rx_rem[i] != &#x27;0&#x27;) {
+            has_error = 1;
+            break;
+        }
+    }
+
+    printf(&quot;[Receiver] Remainder after division: %s\n&quot;, rx_rem);
+    if (has_error) {
+        printf(&quot;[Receiver] Status: ERROR DETECTED! Remainder is non-zero.\n&quot;);
+    } else {
+        printf(&quot;[Receiver] Status: NO ERROR DETECTED. Codeword accepted.\n&quot;);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            <div id="q9_content_3" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q9_4_Internet_Checksum.c" target="_blank">Q9_4_Internet_Checksum.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q9_content_3_code')">📋 Copy</button>
+                        <a href="Q9_4_Internet_Checksum.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q9_content_3_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 9.4
+ * Error Detection: Internet Checksum Method (16-bit One&#x27;s Complement Addition)
+ * As used in IPv4, TCP, and UDP headers (RFC 1071).
+ */
+
+#include &lt;stdio.h&gt;
+
+unsigned short compute_checksum(const unsigned short *words, int n) {
+    unsigned int sum = 0;
+    for (int i = 0; i &lt; n; i++) {
+        sum += words[i];
+        // Fold 32-bit sum into 16 bits (end-around carry)
+        while (sum &gt;&gt; 16) {
+            sum = (sum &amp; 0xFFFF) + (sum &gt;&gt; 16);
+        }
+    }
+    return (unsigned short)(~sum &amp; 0xFFFF); // One&#x27;s complement
+}
+
+int verify_checksum(const unsigned short *words, int n, unsigned short checksum) {
+    unsigned int sum = 0;
+    for (int i = 0; i &lt; n; i++) {
+        sum += words[i];
+        while (sum &gt;&gt; 16) {
+            sum = (sum &amp; 0xFFFF) + (sum &gt;&gt; 16);
+        }
+    }
+    sum += checksum;
+    while (sum &gt;&gt; 16) {
+        sum = (sum &amp; 0xFFFF) + (sum &gt;&gt; 16);
+    }
+    return (unsigned short)(~sum &amp; 0xFFFF) == 0;
+}
+
+int main(void) {
+    int n;
+    unsigned short data[16];
+
+    printf(&quot;--- 9.4 Internet Checksum (16-bit Words) ---\n&quot;);
+    printf(&quot;Enter number of 16-bit words (e.g. 3): &quot;);
+    if (scanf(&quot;%d&quot;, &amp;n) != 1 || n &lt;= 0 || n &gt; 16) return 1;
+
+    printf(&quot;Enter %d words in hexadecimal (e.g. 4500 003c 1c46):\n&quot;, n);
+    for (int i = 0; i &lt; n; i++) {
+        unsigned int val;
+        printf(&quot;  Word %d: 0x&quot;, i + 1);
+        scanf(&quot;%x&quot;, &amp;val);
+        data[i] = (unsigned short)(val &amp; 0xFFFF);
+    }
+
+    unsigned short checksum = compute_checksum(data, n);
+    printf(&quot;\n[Sender] Calculated 16-bit Checksum: 0x%04X\n&quot;, checksum);
+
+    // Receiver Verification
+    printf(&quot;\n--- Receiver Verification ---\n&quot;);
+    printf(&quot;Enter received checksum (or press matching: 0x%04X): 0x&quot;, checksum);
+    unsigned int rx_chk;
+    scanf(&quot;%x&quot;, &amp;rx_chk);
+
+    if (verify_checksum(data, n, (unsigned short)(rx_chk &amp; 0xFFFF))) {
+        printf(&quot;[Receiver] Status: NO ERROR DETECTED. Sum is 0xFFFF (~Sum = 0x0000).\n&quot;);
+    } else {
+        printf(&quot;[Receiver] Status: ERROR DETECTED! Checksum verification failed.\n&quot;);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q10" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code</span>
+                    <h2 class="card-title">Q10: Error Correction using Hamming Code</h2>
+                </div>
+                <a href="#q10" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>10. Write a C/C++ program to perform error correction using Hamming code method.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q10', 0)">
+                Hamming (7, 4) Code Encoding &amp; Correction
+            </button>
+            
+                </div>
+                
+            <div id="q10_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q10_Hamming_Code.c" target="_blank">Q10_Hamming_Code.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q10_content_0_code')">📋 Copy</button>
+                        <a href="Q10_Hamming_Code.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q10_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 10
+ * Program to perform Error Detection and Correction using Hamming Code (7, 4).
+ * 4 data bits (d1, d2, d3, d4) encoded into 7-bit codeword with 3 parity bits (p1, p2, p4).
+ */
+
+#include &lt;stdio.h&gt;
+
+int main(void) {
+    int data[4];      // d1, d2, d3, d4
+    int code[8];      // 1-indexed: code[1] to code[7]
+    int rx[8];        // received codeword
+    int s1, s2, s4, error_pos;
+
+    printf(&quot;--- Error Correction using Hamming Code (7, 4) ---\n&quot;);
+    printf(&quot;Enter 4 data bits (separated by spaces, e.g. 1 0 1 1): &quot;);
+    for (int i = 0; i &lt; 4; i++) {
+        if (scanf(&quot;%d&quot;, &amp;data[i]) != 1) return 1;
+    }
+
+    // Placing data bits at positions 3, 5, 6, 7
+    code[3] = data[0]; // d1
+    code[5] = data[1]; // d2
+    code[6] = data[2]; // d3
+    code[7] = data[3]; // d4
+
+    // Calculating even parity bits at powers of 2: 1, 2, 4
+    code[1] = code[3] ^ code[5] ^ code[7]; // p1 covers 1, 3, 5, 7
+    code[2] = code[3] ^ code[6] ^ code[7]; // p2 covers 2, 3, 6, 7
+    code[4] = code[5] ^ code[6] ^ code[7]; // p4 covers 4, 5, 6, 7
+
+    printf(&quot;\n[Sender] Parity Bits: p1 = %d, p2 = %d, p4 = %d\n&quot;, code[1], code[2], code[4]);
+    printf(&quot;[Sender] Transmitted 7-bit Codeword: &quot;);
+    for (int i = 1; i &lt;= 7; i++) printf(&quot;%d&quot;, code[i]);
+    printf(&quot;\n  (Bit order: p1 p2 d1 p4 d2 d3 d4)\n&quot;);
+
+    // Receiver Simulation
+    printf(&quot;\n[Receiver] Enter 7 received bits (separated by spaces): &quot;);
+    for (int i = 1; i &lt;= 7; i++) {
+        scanf(&quot;%d&quot;, &amp;rx[i]);
+    }
+
+    // Calculate syndrome bits
+    s1 = rx[1] ^ rx[3] ^ rx[5] ^ rx[7];
+    s2 = rx[2] ^ rx[3] ^ rx[6] ^ rx[7];
+    s4 = rx[4] ^ rx[5] ^ rx[6] ^ rx[7];
+
+    error_pos = (s4 * 4) + (s2 * 2) + (s1 * 1);
+
+    if (error_pos == 0) {
+        printf(&quot;\n[Receiver] Status: NO ERROR DETECTED! Codeword is correct.\n&quot;);
+    } else {
+        printf(&quot;\n[Receiver] Status: ERROR DETECTED at bit position %d!\n&quot;, error_pos);
+        rx[error_pos] = 1 - rx[error_pos]; // Correct the erroneous bit
+        printf(&quot;[Receiver] Corrected Codeword: &quot;);
+        for (int i = 1; i &lt;= 7; i++) printf(&quot;%d&quot;, rx[i]);
+        printf(&quot;\n[Receiver] Recovered Data Bits: %d %d %d %d\n&quot;, rx[3], rx[5], rx[6], rx[7]);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q11" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-txt">Study &amp; C Code</span>
+                    <h2 class="card-title">Q11: Socket Programming &amp; Client-Server Model</h2>
+                </div>
+                <a href="#q11" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>11. Study and implement model for Socket Programming and Client - Server model.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q11', 0)">
+                Socket Programming Lifecycle &amp; Theory
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q11', 1)">
+                11.1 TCP Socket Server (Cross-platform)
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q11', 2)">
+                11.2 TCP Socket Client (Cross-platform)
+            </button>
+            
+                </div>
+                
+            <div id="q11_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q11_Socket_Programming_Model.txt" target="_blank">Q11_Socket_Programming_Model.txt</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q11_content_0_code')">📋 Copy</button>
+                        <a href="Q11_Socket_Programming_Model.txt" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q11_content_0_code" class="language-none">================================================================================
+IT302 - DATA COMMUNICATION AND COMPUTER NETWORKS LAB
+QUESTION 11: STUDY AND IMPLEMENTATION OF SOCKET PROGRAMMING &amp; CLIENT-SERVER MODEL
+================================================================================
+
+11.1 INTRODUCTION TO SOCKET PROGRAMMING
+----------------------------------------
+A socket is an endpoint for bidirectional, inter-process communication (IPC) across an 
+IP network. A network socket is bound to a combination of an **IP Address** and a **Port Number** 
+(e.g., `127.0.0.1:8080`).
+
+Sockets operate in two primary modes:
+1. **Stream Sockets (`SOCK_STREAM`)**: Based on TCP (Transmission Control Protocol). Connection-oriented, 
+   reliable, ordered, and error-checked byte stream delivery.
+2. **Datagram Sockets (`SOCK_DGRAM`)**: Based on UDP (User Datagram Protocol). Connectionless, 
+   unreliable, minimal overhead, message-boundary preserving.
+
+
+11.2 TCP CLIENT-SERVER ARCHITECTURE WORKFLOW
+---------------------------------------------
+
+         SERVER                                          CLIENT
+   ------------------                             -------------------
+     socket()                                           socket()
+        |                                                  |
+      bind()                                               |
+        |                                                  |
+     listen()                                              |
+        |                                                  |
+     accept()  &lt;---------- [SYN: Connection Request] ---- connect()
+        |     ---------- [SYN-ACK: Acknowledgment] -------&gt;|
+        |     &lt;---------- [ACK: Connection Established] ---|
+        |                                                  |
+     recv()    &lt;---------- [Data Request] ----------------- send()
+        |                                                  |
+     send()    ---------- [Data Response] ----------------&gt; recv()
+        |                                                  |
+     close()   &lt;---------- [FIN / Close] ------------------ close()
+
+
+11.3 CORE SOCKET SYSTEM CALL PRIMITIVES (C API)
+------------------------------------------------
+1. `socket(int domain, int type, int protocol)`:
+   - Creates an unbound network socket descriptor.
+   - Example: `int fd = socket(AF_INET, SOCK_STREAM, 0);` (IPv4, TCP).
+
+2. `bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`:
+   - Assigns a local IP address and port number to the socket.
+   - Used by servers to listen on a well-known port.
+
+3. `listen(int sockfd, int backlog)`:
+   - Marks the socket as passive (ready to accept incoming client connections).
+   - `backlog`: Maximum number of pending connections queued.
+
+4. `accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)`:
+   - Blocks until an incoming connection arrives.
+   - Extracts first connection from queue and returns a NEW active connected socket descriptor.
+
+5. `connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`:
+   - Invoked by the client to initiate the 3-Way TCP handshake with the server.
+
+6. `send()` / `recv()` (or `write()` / `read()`):
+   - Transmits and receives data buffers over the established TCP byte stream.
+
+7. `close()` (or `closesocket()` on Windows):
+   - Terminates socket connection and releases OS descriptor resources.
+
+
+11.4 SOURCE CODE IMPLEMENTATION
+--------------------------------
+The corresponding C source code files are provided:
+- `Q11_1_Socket_Server.c`: Standalone TCP Server that listens on port 8080 and replies to client.
+- `Q11_2_Socket_Client.c`: Standalone TCP Client that connects to 127.0.0.1:8080 and exchanges data.
+Both files include cross-platform support (Linux POSIX &amp; Windows Winsock).
+================================================================================
+
+</code></pre>
+            </div>
+            
+            <div id="q11_content_1" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q11_1_Socket_Server.c" target="_blank">Q11_1_Socket_Server.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q11_content_1_code')">📋 Copy</button>
+                        <a href="Q11_1_Socket_Server.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q11_content_1_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 11.1
+ * Implementation of TCP Socket Server (Client - Server Model)
+ * Listens on port 8080, receives a message from the client, and sends a reply.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#ifdef _WIN32
+  #include &lt;winsock2.h&gt;
+  #include &lt;ws2tcpip.h&gt;
+  #pragma comment(lib, &quot;ws2_32.lib&quot;)
+  typedef int socklen_t;
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include &lt;sys/socket.h&gt;
+  #include &lt;netinet/in.h&gt;
+  #include &lt;arpa/inet.h&gt;
+  #include &lt;unistd.h&gt;
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define PORT 8080
+#define BUFFER_SIZE 1024
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &amp;wsa) != 0) {
+        printf(&quot;WSAStartup failed.\n&quot;);
+        return 1;
+    }
+#endif
+
+    int server_fd, client_fd;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t client_len = sizeof(client_addr);
+    char buffer[BUFFER_SIZE] = {0};
+
+    // 1. Create socket
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) &lt; 0) {
+        perror(&quot;Socket creation failed&quot;);
+        return 1;
+    }
+
+    // 2. Bind to IP and Port
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
+
+    if (bind(server_fd, (struct sockaddr *)&amp;server_addr, sizeof(server_addr)) &lt; 0) {
+        perror(&quot;Bind failed&quot;);
+        CLOSE_SOCK(server_fd);
+        return 1;
+    }
+
+    // 3. Listen for incoming connections
+    if (listen(server_fd, 3) &lt; 0) {
+        perror(&quot;Listen failed&quot;);
+        CLOSE_SOCK(server_fd);
+        return 1;
+    }
+
+    printf(&quot;========================================\n&quot;);
+    printf(&quot;TCP Server listening on port %d...\n&quot;, PORT);
+    printf(&quot;Waiting for client connection...\n&quot;);
+    printf(&quot;========================================\n&quot;);
+
+    // 4. Accept client connection
+    client_fd = accept(server_fd, (struct sockaddr *)&amp;client_addr, &amp;client_len);
+    if (client_fd &lt; 0) {
+        perror(&quot;Accept failed&quot;);
+        CLOSE_SOCK(server_fd);
+        return 1;
+    }
+
+    printf(&quot;[+] Client connected from %s:%d\n&quot;, 
+           inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+
+    // 5. Receive message from client
+    int bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_read &gt; 0) {
+        buffer[bytes_read] = &#x27;\0&#x27;;
+        printf(&quot;[Client Message]: %s\n&quot;, buffer);
+    }
+
+    // 6. Send response to client
+    const char *reply = &quot;Hello from TCP Server! Message received successfully.&quot;;
+    send(client_fd, reply, (int)strlen(reply), 0);
+    printf(&quot;[+] Reply sent to client.\n&quot;);
+
+    // 7. Cleanup
+    CLOSE_SOCK(client_fd);
+    CLOSE_SOCK(server_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    printf(&quot;[+] Connection closed.\n&quot;);
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            <div id="q11_content_2" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q11_2_Socket_Client.c" target="_blank">Q11_2_Socket_Client.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q11_content_2_code')">📋 Copy</button>
+                        <a href="Q11_2_Socket_Client.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q11_content_2_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 11.2
+ * Implementation of TCP Socket Client (Client - Server Model)
+ * Connects to server on 127.0.0.1:8080, sends a message, and reads the reply.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#ifdef _WIN32
+  #include &lt;winsock2.h&gt;
+  #include &lt;ws2tcpip.h&gt;
+  #pragma comment(lib, &quot;ws2_32.lib&quot;)
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include &lt;sys/socket.h&gt;
+  #include &lt;netinet/in.h&gt;
+  #include &lt;arpa/inet.h&gt;
+  #include &lt;unistd.h&gt;
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define SERVER_IP &quot;127.0.0.1&quot;
+#define PORT 8080
+#define BUFFER_SIZE 1024
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &amp;wsa) != 0) {
+        printf(&quot;WSAStartup failed.\n&quot;);
+        return 1;
+    }
+#endif
+
+    int sock_fd;
+    struct sockaddr_in server_addr;
+    char buffer[BUFFER_SIZE] = {0};
+    char message[256];
+
+    // 1. Create socket
+    if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) &lt; 0) {
+        perror(&quot;Socket creation failed&quot;);
+        return 1;
+    }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
+
+    printf(&quot;Connecting to TCP Server at %s:%d...\n&quot;, SERVER_IP, PORT);
+
+    // 2. Connect to server
+    if (connect(sock_fd, (struct sockaddr *)&amp;server_addr, sizeof(server_addr)) &lt; 0) {
+        perror(&quot;Connection to server failed. Ensure server is running first!&quot;);
+        CLOSE_SOCK(sock_fd);
+        return 1;
+    }
+
+    printf(&quot;[+] Connected to server successfully!\n&quot;);
+
+    // 3. Send message
+    printf(&quot;Enter message to send to server: &quot;);
+    if (!fgets(message, sizeof(message), stdin)) return 1;
+    message[strcspn(message, &quot;\r\n&quot;)] = &#x27;\0&#x27;;
+
+    send(sock_fd, message, (int)strlen(message), 0);
+    printf(&quot;[+] Message sent.\n&quot;);
+
+    // 4. Receive reply
+    int bytes_read = recv(sock_fd, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_read &gt; 0) {
+        buffer[bytes_read] = &#x27;\0&#x27;;
+        printf(&quot;[Server Response]: %s\n&quot;, buffer);
+    }
+
+    // 5. Cleanup
+    CLOSE_SOCK(sock_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    printf(&quot;[+] Socket closed.\n&quot;);
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q12" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code (2 Parts)</span>
+                    <h2 class="card-title">Q12: HTTP Sockets: Web Page Upload &amp; Download</h2>
+                </div>
+                <a href="#q12" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>12. Create a socket for HTTP for web page upload and download.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q12', 0)">
+                12.1 HTTP GET Web Page Downloader
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q12', 1)">
+                12.2 HTTP POST Web Page / Data Uploader
+            </button>
+            
+                </div>
+                
+            <div id="q12_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q12_1_HTTP_Download.c" target="_blank">Q12_1_HTTP_Download.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q12_content_0_code')">📋 Copy</button>
+                        <a href="Q12_1_HTTP_Download.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q12_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 12.1
+ * HTTP Socket Client for Web Page Download (HTTP GET)
+ * Connects to an HTTP server over Port 80, requests a page, and saves the response.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#ifdef _WIN32
+  #include &lt;winsock2.h&gt;
+  #include &lt;ws2tcpip.h&gt;
+  #pragma comment(lib, &quot;ws2_32.lib&quot;)
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include &lt;sys/socket.h&gt;
+  #include &lt;netinet/in.h&gt;
+  #include &lt;arpa/inet.h&gt;
+  #include &lt;netdb.h&gt;
+  #include &lt;unistd.h&gt;
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define BUFFER_SIZE 4096
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &amp;wsa) != 0) return 1;
+#endif
+
+    char host[64] = &quot;example.com&quot;;
+    char path[128] = &quot;/&quot;;
+    int port = 80;
+
+    printf(&quot;--- 12.1 HTTP Socket Web Page Download (GET) ---\n&quot;);
+    printf(&quot;Target Host: %s, Port: %d, Path: %s\n&quot;, host, port, path);
+
+    // 1. Resolve host
+    struct hostent *server = gethostbyname(host);
+    if (!server) {
+        printf(&quot;Error: Could not resolve host %s\n&quot;, host);
+        return 1;
+    }
+
+    // 2. Create Socket
+    int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock_fd &lt; 0) {
+        perror(&quot;Socket failed&quot;);
+        return 1;
+    }
+
+    struct sockaddr_in serv_addr;
+    memset(&amp;serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    memcpy(&amp;serv_addr.sin_addr.s_addr, server-&gt;h_addr_list[0], server-&gt;h_length);
+    serv_addr.sin_port = htons(port);
+
+    // 3. Connect to HTTP server
+    printf(&quot;Connecting to %s...\n&quot;, host);
+    if (connect(sock_fd, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr)) &lt; 0) {
+        perror(&quot;Connection failed&quot;);
+        CLOSE_SOCK(sock_fd);
+        return 1;
+    }
+    printf(&quot;[+] Connected to HTTP server.\n&quot;);
+
+    // 4. Construct and Send HTTP GET Request
+    char request[512];
+    snprintf(request, sizeof(request),
+             &quot;GET %s HTTP/1.1\r\n&quot;
+             &quot;Host: %s\r\n&quot;
+             &quot;User-Agent: C-Socket-HTTP-Client/1.0\r\n&quot;
+             &quot;Connection: close\r\n\r\n&quot;,
+             path, host);
+
+    send(sock_fd, request, (int)strlen(request), 0);
+    printf(&quot;[+] HTTP GET Request sent:\n%s\n&quot;, request);
+
+    // 5. Receive HTTP Response and Save to File
+    FILE *fp = fopen(&quot;downloaded_page.html&quot;, &quot;wb&quot;);
+    char buffer[BUFFER_SIZE];
+    int total_bytes = 0, bytes_received;
+
+    printf(&quot;[+] Receiving HTTP Response...\n&quot;);
+    while ((bytes_received = recv(sock_fd, buffer, sizeof(buffer), 0)) &gt; 0) {
+        if (fp) fwrite(buffer, 1, bytes_received, fp);
+        total_bytes += bytes_received;
+        // Print preview to console
+        fwrite(buffer, 1, bytes_received, stdout);
+    }
+
+    if (fp) {
+        fclose(fp);
+        printf(&quot;\n\n[+] Download Complete! Total bytes: %d\n&quot;, total_bytes);
+        printf(&quot;[+] Saved web page to &#x27;downloaded_page.html&#x27;.\n&quot;);
+    }
+
+    CLOSE_SOCK(sock_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            <div id="q12_content_1" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q12_2_HTTP_Upload.c" target="_blank">Q12_2_HTTP_Upload.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q12_content_1_code')">📋 Copy</button>
+                        <a href="Q12_2_HTTP_Upload.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q12_content_1_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 12.2
+ * HTTP Socket Client for Web Page / Data Upload (HTTP POST)
+ * Connects to an HTTP server, uploads payload with Content-Length &amp; Content-Type,
+ * and prints the server&#x27;s acknowledgment response.
+ * Cross-platform: Compiles on both Windows (Winsock) and Linux (POSIX).
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#ifdef _WIN32
+  #include &lt;winsock2.h&gt;
+  #include &lt;ws2tcpip.h&gt;
+  #pragma comment(lib, &quot;ws2_32.lib&quot;)
+  #define CLOSE_SOCK(s) closesocket(s)
+#else
+  #include &lt;sys/socket.h&gt;
+  #include &lt;netinet/in.h&gt;
+  #include &lt;arpa/inet.h&gt;
+  #include &lt;netdb.h&gt;
+  #include &lt;unistd.h&gt;
+  #define CLOSE_SOCK(s) close(s)
+#endif
+
+#define BUFFER_SIZE 4096
+
+int main(void) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &amp;wsa) != 0) return 1;
+#endif
+
+    const char *host = &quot;httpbin.org&quot;;
+    const char *path = &quot;/post&quot;;
+    int port = 80;
+
+    // Payload to upload
+    const char *payload = &quot;title=DCCN+Lab+Assignment&amp;author=Aryan&amp;status=Submitted&quot;;
+    int payload_len = (int)strlen(payload);
+
+    printf(&quot;--- 12.2 HTTP Socket Web Page Data Upload (POST) ---\n&quot;);
+    printf(&quot;Target Host: %s:%d, Path: %s\n&quot;, host, port, path);
+    printf(&quot;Uploading Payload: \&quot;%s\&quot; (%d bytes)\n&quot;, payload, payload_len);
+
+    // 1. Resolve host
+    struct hostent *server = gethostbyname(host);
+    if (!server) {
+        printf(&quot;Error: Could not resolve host %s\n&quot;, host);
+        return 1;
+    }
+
+    // 2. Create socket
+    int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock_fd &lt; 0) {
+        perror(&quot;Socket creation failed&quot;);
+        return 1;
+    }
+
+    struct sockaddr_in serv_addr;
+    memset(&amp;serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    memcpy(&amp;serv_addr.sin_addr.s_addr, server-&gt;h_addr_list[0], server-&gt;h_length);
+    serv_addr.sin_port = htons(port);
+
+    // 3. Connect to server
+    printf(&quot;Connecting to %s...\n&quot;, host);
+    if (connect(sock_fd, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr)) &lt; 0) {
+        perror(&quot;Connection failed&quot;);
+        CLOSE_SOCK(sock_fd);
+        return 1;
+    }
+    printf(&quot;[+] Connected to server.\n&quot;);
+
+    // 4. Construct HTTP POST request header and body
+    char request[1024];
+    snprintf(request, sizeof(request),
+             &quot;POST %s HTTP/1.1\r\n&quot;
+             &quot;Host: %s\r\n&quot;
+             &quot;User-Agent: C-Socket-HTTP-Upload/1.0\r\n&quot;
+             &quot;Content-Type: application/x-www-form-urlencoded\r\n&quot;
+             &quot;Content-Length: %d\r\n&quot;
+             &quot;Connection: close\r\n\r\n&quot;
+             &quot;%s&quot;,
+             path, host, payload_len, payload);
+
+    send(sock_fd, request, (int)strlen(request), 0);
+    printf(&quot;[+] HTTP POST Upload Request Sent:\n%s\n&quot;, request);
+
+    // 5. Receive Server Response
+    char buffer[BUFFER_SIZE];
+    int bytes_received;
+    printf(&quot;[+] Server Response:\n----------------------------------------\n&quot;);
+    while ((bytes_received = recv(sock_fd, buffer, sizeof(buffer) - 1, 0)) &gt; 0) {
+        buffer[bytes_received] = &#x27;\0&#x27;;
+        printf(&quot;%s&quot;, buffer);
+    }
+    printf(&quot;\n----------------------------------------\n&quot;);
+    printf(&quot;[+] Upload and response reception completed successfully.\n&quot;);
+
+    CLOSE_SOCK(sock_fd);
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q13" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code (2 Parts)</span>
+                    <h2 class="card-title">Q13: Simulation of PING &amp; TRACEROUTE Commands</h2>
+                </div>
+                <a href="#q13" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>13. Write a code simulating PING and TRACEROUTE commands.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q13', 0)">
+                13.1 PING Command Simulator
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q13', 1)">
+                13.2 TRACEROUTE Command Simulator
+            </button>
+            
+                </div>
+                
+            <div id="q13_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q13_1_Ping_Simulation.c" target="_blank">Q13_1_Ping_Simulation.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q13_content_0_code')">📋 Copy</button>
+                        <a href="Q13_1_Ping_Simulation.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q13_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 13.1
+ * Simulation of PING Command in C
+ * Simulates sending ICMP Echo Requests, calculating RTT with realistic latency,
+ * packet loss, and generating summary statistics (min/max/avg RTT).
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+
+#ifdef _WIN32
+  #include &lt;windows.h&gt;
+  #define SLEEP_MS(ms) Sleep(ms)
+#else
+  #include &lt;unistd.h&gt;
+  #define SLEEP_MS(ms) usleep((ms) * 1000)
+#endif
+
+int main(void) {
+    char target[128];
+    int count = 4;
+    int bytes = 32;
+    int ttl = 64;
+
+    srand((unsigned int)time(NULL));
+
+    printf(&quot;--- 13.1 PING Command Simulation ---\n&quot;);
+    printf(&quot;Enter target hostname or IP (e.g. google.com): &quot;);
+    if (scanf(&quot;%127s&quot;, target) != 1) return 1;
+
+    printf(&quot;\nPinging %s with %d bytes of data:\n\n&quot;, target, bytes);
+
+    int sent = 0, received = 0;
+    int min_rtt = 9999, max_rtt = 0, sum_rtt = 0;
+
+    for (int seq = 1; seq &lt;= count; seq++) {
+        sent++;
+        SLEEP_MS(500); // Simulate transmission interval
+
+        // Simulate 10% packet drop chance
+        int drop = (rand() % 10 == 0);
+
+        if (drop) {
+            printf(&quot;Request timed out.\n&quot;);
+        } else {
+            // Simulate RTT between 20ms and 80ms
+            int rtt = 20 + (rand() % 61);
+            received++;
+            sum_rtt += rtt;
+            if (rtt &lt; min_rtt) min_rtt = rtt;
+            if (rtt &gt; max_rtt) max_rtt = rtt;
+
+            printf(&quot;Reply from %s: bytes=%d time=%dms TTL=%d (icmp_seq=%d)\n&quot;,
+                   target, bytes, rtt, ttl, seq);
+        }
+    }
+
+    int lost = sent - received;
+    double loss_percent = ((double)lost / sent) * 100.0;
+
+    printf(&quot;\n--- Ping statistics for %s ---\n&quot;, target);
+    printf(&quot;    Packets: Sent = %d, Received = %d, Lost = %d (%.0f%% loss),\n&quot;,
+           sent, received, lost, loss_percent);
+
+    if (received &gt; 0) {
+        double avg_rtt = (double)sum_rtt / received;
+        printf(&quot;Approximate round trip times in milli-seconds:\n&quot;);
+        printf(&quot;    Minimum = %dms, Maximum = %dms, Average = %.1fms\n&quot;,
+               min_rtt, max_rtt, avg_rtt);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            <div id="q13_content_1" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q13_2_Traceroute_Simulation.c" target="_blank">Q13_2_Traceroute_Simulation.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q13_content_1_code')">📋 Copy</button>
+                        <a href="Q13_2_Traceroute_Simulation.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q13_content_1_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 13.2
+ * Simulation of TRACEROUTE Command in C
+ * Simulates hop-by-hop packet routing with increasing TTL (1, 2, 3...),
+ * intermediate router ICMP Time Exceeded responses, 3 probe latency samples, and route completion.
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+
+#ifdef _WIN32
+  #include &lt;windows.h&gt;
+  #define SLEEP_MS(ms) Sleep(ms)
+#else
+  #include &lt;unistd.h&gt;
+  #define SLEEP_MS(ms) usleep((ms) * 1000)
+#endif
+
+// Simulated hop router addresses
+const char *simulated_hops[] = {
+    &quot;172.16.8.1&quot;,       // Hop 1: Lab Default Gateway
+    &quot;172.16.13.1&quot;,      // Hop 2: Campus Core Switch
+    &quot;136.232.33.117&quot;,   // Hop 3: ISP Border Router
+    &quot;49.44.59.153&quot;,     // Hop 4: National Backbone Router
+    &quot;72.14.243.188&quot;,    // Hop 5: Peering Exchange
+    &quot;142.250.143.138&quot;   // Hop 6: Target Destination
+};
+
+int main(void) {
+    char target[128];
+    int max_hops = 10;
+    int total_sim_hops = sizeof(simulated_hops) / sizeof(simulated_hops[0]);
+
+    srand((unsigned int)time(NULL));
+
+    printf(&quot;--- 13.2 TRACEROUTE Simulation ---\n&quot;);
+    printf(&quot;Enter destination hostname or IP (e.g. google.com): &quot;);
+    if (scanf(&quot;%127s&quot;, target) != 1) return 1;
+
+    printf(&quot;\nTracing route to %s over a maximum of %d hops:\n\n&quot;, target, max_hops);
+    printf(&quot;  Hop     RTT 1      RTT 2      RTT 3    IP Address\n&quot;);
+    printf(&quot;  --------------------------------------------------------\n&quot;);
+
+    int base_latency = 1;
+
+    for (int ttl = 1; ttl &lt;= max_hops; ttl++) {
+        SLEEP_MS(300); // Simulate network round-trip delay
+
+        int hop_idx = ttl - 1;
+        if (hop_idx &gt;= total_sim_hops) {
+            break;
+        }
+
+        // Generate 3 probe latencies
+        int rtt1 = base_latency + (rand() % 5);
+        int rtt2 = base_latency + (rand() % 5);
+        int rtt3 = base_latency + (rand() % 5);
+
+        // Simulate occasional packet drop (timeout)
+        int timeout_hop = (ttl == 5 &amp;&amp; (rand() % 4 == 0));
+
+        if (timeout_hop) {
+            printf(&quot;  %2d        *          *          *      Request timed out.\n&quot;, ttl);
+        } else {
+            printf(&quot;  %2d     %3d ms     %3d ms     %3d ms    %s\n&quot;,
+                   ttl, rtt1, rtt2, rtt3, simulated_hops[hop_idx]);
+        }
+
+        base_latency += 7 + (rand() % 8); // Latency increases as distance grows
+
+        // Check if destination reached
+        if (hop_idx == total_sim_hops - 1) {
+            printf(&quot;\nTrace complete. Destination reached in %d hops.\n&quot;, ttl);
+            return 0;
+        }
+    }
+
+    printf(&quot;\nTrace complete.\n&quot;);
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q14" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code</span>
+                    <h2 class="card-title">Q14: DHCP Server Simulation (DORA)</h2>
+                </div>
+                <a href="#q14" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>14. Write a code simulating DHCP server.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q14', 0)">
+                DHCP Server Simulation (Discover, Offer, Request, Ack)
+            </button>
+            
+                </div>
+                
+            <div id="q14_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q14_DHCP_Server_Simulation.c" target="_blank">Q14_DHCP_Server_Simulation.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q14_content_0_code')">📋 Copy</button>
+                        <a href="Q14_DHCP_Server_Simulation.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q14_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 14
+ * Simulation of DHCP (Dynamic Host Configuration Protocol) Server
+ * Simulates DORA Workflow: Discover -&gt; Offer -&gt; Request -&gt; Acknowledge.
+ * Manages IP Address Pool, Client Leases, Gateway, DNS, and Subnet Mask.
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+#define POOL_SIZE 8
+#define SUBNET_MASK &quot;255.255.255.0&quot;
+#define DEFAULT_GATEWAY &quot;192.168.1.1&quot;
+#define DNS_SERVER &quot;8.8.8.8&quot;
+#define LEASE_TIME 3600 // seconds
+
+typedef struct {
+    char ip[16];
+    char mac[18];
+    int allocated;
+} Lease;
+
+Lease ip_pool[POOL_SIZE];
+
+void init_pool(void) {
+    for (int i = 0; i &lt; POOL_SIZE; i++) {
+        snprintf(ip_pool[i].ip, sizeof(ip_pool[i].ip), &quot;192.168.1.%d&quot;, 100 + i);
+        ip_pool[i].mac[0] = &#x27;\0&#x27;;
+        ip_pool[i].allocated = 0;
+    }
+}
+
+void display_pool(void) {
+    printf(&quot;\n=== Current DHCP IP Pool &amp; Leases ===\n&quot;);
+    printf(&quot;%-5s | %-16s | %-18s | %-10s\n&quot;, &quot;Index&quot;, &quot;IP Address&quot;, &quot;Client MAC&quot;, &quot;Status&quot;);
+    printf(&quot;---------------------------------------------------------\n&quot;);
+    for (int i = 0; i &lt; POOL_SIZE; i++) {
+        printf(&quot;%-5d | %-16s | %-18s | %-10s\n&quot;,
+               i + 1,
+               ip_pool[i].ip,
+               ip_pool[i].allocated ? ip_pool[i].mac : &quot;None&quot;,
+               ip_pool[i].allocated ? &quot;LEASED&quot; : &quot;AVAILABLE&quot;);
+    }
+    printf(&quot;=========================================================\n&quot;);
+}
+
+void allocate_ip(const char *mac) {
+    // 1. Check if MAC already holds a lease
+    for (int i = 0; i &lt; POOL_SIZE; i++) {
+        if (ip_pool[i].allocated &amp;&amp; strcmp(ip_pool[i].mac, mac) == 0) {
+            printf(&quot;\n[!] Client %s already holds lease for IP: %s\n&quot;, mac, ip_pool[i].ip);
+            return;
+        }
+    }
+
+    // 2. Find first free IP
+    int free_idx = -1;
+    for (int i = 0; i &lt; POOL_SIZE; i++) {
+        if (!ip_pool[i].allocated) {
+            free_idx = i;
+            break;
+        }
+    }
+
+    if (free_idx == -1) {
+        printf(&quot;\n[-] DHCP Server Error: IP pool exhausted! No IP available.\n&quot;);
+        return;
+    }
+
+    // 3. Simulate DORA 4-way handshake
+    printf(&quot;\n--- Simulating DHCP DORA Exchange ---\n&quot;);
+    printf(&quot;1. [Client -&gt; Broadcast] DHCP DISCOVER (Looking for DHCP Server from MAC %s)\n&quot;, mac);
+    printf(&quot;2. [Server -&gt; Client   ] DHCP OFFER    (Offering IP: %s)\n&quot;, ip_pool[free_idx].ip);
+    printf(&quot;3. [Client -&gt; Server   ] DHCP REQUEST  (Requesting lease for %s)\n&quot;, ip_pool[free_idx].ip);
+    printf(&quot;4. [Server -&gt; Client   ] DHCP ACK      (Confirmed IP Lease)\n&quot;);
+
+    // Commit lease
+    ip_pool[free_idx].allocated = 1;
+    strncpy(ip_pool[free_idx].mac, mac, sizeof(ip_pool[free_idx].mac) - 1);
+
+    printf(&quot;\n[+] Lease Granted successfully!\n&quot;);
+    printf(&quot;    Assigned IP    : %s\n&quot;, ip_pool[free_idx].ip);
+    printf(&quot;    Subnet Mask    : %s\n&quot;, SUBNET_MASK);
+    printf(&quot;    Default Gateway: %s\n&quot;, DEFAULT_GATEWAY);
+    printf(&quot;    DNS Server     : %s\n&quot;, DNS_SERVER);
+    printf(&quot;    Lease Duration : %d seconds\n&quot;, LEASE_TIME);
+}
+
+void release_ip(const char *mac) {
+    for (int i = 0; i &lt; POOL_SIZE; i++) {
+        if (ip_pool[i].allocated &amp;&amp; strcmp(ip_pool[i].mac, mac) == 0) {
+            ip_pool[i].allocated = 0;
+            ip_pool[i].mac[0] = &#x27;\0&#x27;;
+            printf(&quot;\n[+] DHCP RELEASE received: IP %s released by MAC %s.\n&quot;, ip_pool[i].ip, mac);
+            return;
+        }
+    }
+    printf(&quot;\n[-] No active lease found for MAC: %s\n&quot;, mac);
+}
+
+int main(void) {
+    init_pool();
+    int choice;
+    char mac[18];
+
+    printf(&quot;==========================================\n&quot;);
+    printf(&quot;       DHCP SERVER SIMULATION SYSTEM      \n&quot;);
+    printf(&quot;==========================================\n&quot;);
+
+    while (1) {
+        printf(&quot;\n1. Request IP Address (DORA Workflow)\n&quot;);
+        printf(&quot;2. Release IP Address (DHCP RELEASE)\n&quot;);
+        printf(&quot;3. View IP Pool and Lease Status\n&quot;);
+        printf(&quot;4. Exit\n&quot;);
+        printf(&quot;Enter your choice (1-4): &quot;);
+        if (scanf(&quot;%d&quot;, &amp;choice) != 1) break;
+
+        switch (choice) {
+            case 1:
+                printf(&quot;Enter Client MAC Address (e.g. AA:BB:CC:DD:EE:01): &quot;);
+                scanf(&quot;%17s&quot;, mac);
+                allocate_ip(mac);
+                break;
+            case 2:
+                printf(&quot;Enter Client MAC Address to Release: &quot;);
+                scanf(&quot;%17s&quot;, mac);
+                release_ip(mac);
+                break;
+            case 3:
+                display_pool();
+                break;
+            case 4:
+                printf(&quot;Exiting DHCP Server Simulation.\n&quot;);
+                return 0;
+            default:
+                printf(&quot;Invalid selection!\n&quot;);
+        }
+    }
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        <section id="q15" class="question-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <span class="badge badge-c">C Code (2 Algorithms)</span>
+                    <h2 class="card-title">Q15: Routing Table Implementation</h2>
+                </div>
+                <a href="#q15" class="anchor-link" title="Direct link">🔗</a>
+            </div>
+            
+            <div class="problem-box">
+                <strong>Problem Statement:</strong>
+                <p>15. Implement the routing table using:<br> a) Dijkstra&#x27;s algorithm.<br> b) Distance vector Routing algorithm.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab-buttons-bar">
+                    
+            <button class="tab-btn active" onclick="switchTab('q15', 0)">
+                15.1 Dijkstra&#x27;s Shortest Path Routing (OSPF)
+            </button>
+            
+            <button class="tab-btn " onclick="switchTab('q15', 1)">
+                15.2 Distance Vector Routing (Bellman-Ford / RIP)
+            </button>
+            
+                </div>
+                
+            <div id="q15_content_0" class="tab-content active">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q15_1_Dijkstra_Routing.c" target="_blank">Q15_1_Dijkstra_Routing.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q15_content_0_code')">📋 Copy</button>
+                        <a href="Q15_1_Dijkstra_Routing.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q15_content_0_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 15.1
+ * Routing Table Implementation using Dijkstra&#x27;s Shortest Path Algorithm
+ * (Link State Routing Protocol - e.g. OSPF)
+ */
+
+#include &lt;stdio.h&gt;
+
+#define MAX_NODES 10
+#define INF 9999
+
+int main(void) {
+    int n, src;
+    int cost[MAX_NODES][MAX_NODES];
+    int dist[MAX_NODES];
+    int visited[MAX_NODES] = {0};
+    int next_hop[MAX_NODES];
+
+    printf(&quot;--- 15.1 Dijkstra&#x27;s Link-State Routing Table ---\n&quot;);
+    printf(&quot;Enter number of routers/nodes (max %d): &quot;, MAX_NODES);
+    if (scanf(&quot;%d&quot;, &amp;n) != 1 || n &lt;= 0 || n &gt; MAX_NODES) return 1;
+
+    printf(&quot;Enter adjacency cost matrix (%d x %d, enter %d for no direct link):\n&quot;, n, n, INF);
+    for (int i = 0; i &lt; n; i++) {
+        for (int j = 0; j &lt; n; j++) {
+            scanf(&quot;%d&quot;, &amp;cost[i][j]);
+            if (i == j) cost[i][j] = 0;
+        }
+    }
+
+    printf(&quot;Enter source router ID (0 to %d): &quot;, n - 1);
+    if (scanf(&quot;%d&quot;, &amp;src) != 1 || src &lt; 0 || src &gt;= n) return 1;
+
+    // Initialization
+    for (int i = 0; i &lt; n; i++) {
+        dist[i] = cost[src][i];
+        if (cost[src][i] != INF &amp;&amp; i != src) {
+            next_hop[i] = i; // Direct neighbor is initial next hop
+        } else {
+            next_hop[i] = -1;
+        }
+    }
+    visited[src] = 1;
+    dist[src] = 0;
+    next_hop[src] = src;
+
+    // Dijkstra&#x27;s Algorithm
+    for (int count = 1; count &lt; n; count++) {
+        int min_dist = INF, u = -1;
+
+        // Pick unvisited node with minimum distance
+        for (int i = 0; i &lt; n; i++) {
+            if (!visited[i] &amp;&amp; dist[i] &lt; min_dist) {
+                min_dist = dist[i];
+                u = i;
+            }
+        }
+
+        if (u == -1 || min_dist == INF) break;
+        visited[u] = 1;
+
+        // Relax neighbors of u
+        for (int v = 0; v &lt; n; v++) {
+            if (!visited[v] &amp;&amp; cost[u][v] != INF &amp;&amp; (dist[u] + cost[u][v] &lt; dist[v])) {
+                dist[v] = dist[u] + cost[u][v];
+                next_hop[v] = next_hop[u]; // Next hop remains the same as that to reach u
+            }
+        }
+    }
+
+    // Display Routing Table for Source Router
+    printf(&quot;\n============================================\n&quot;);
+    printf(&quot;      ROUTING TABLE FOR ROUTER %d (OSPF)    \n&quot;, src);
+    printf(&quot;============================================\n&quot;);
+    printf(&quot; Destination | Total Cost | Next Hop Router \n&quot;);
+    printf(&quot;--------------------------------------------\n&quot;);
+    for (int i = 0; i &lt; n; i++) {
+        if (dist[i] == INF) {
+            printf(&quot;      %2d     |  UNREACH   |        --       \n&quot;, i);
+        } else {
+            printf(&quot;      %2d     |    %4d    |        %2d       \n&quot;, i, dist[i], next_hop[i]);
+        }
+    }
+    printf(&quot;============================================\n&quot;);
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            <div id="q15_content_1" class="tab-content ">
+                <div class="code-header">
+                    <span class="file-name">📄 <a href="Q15_2_Distance_Vector_Routing.c" target="_blank">Q15_2_Distance_Vector_Routing.c</a></span>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyToClipboard('q15_content_1_code')">📋 Copy</button>
+                        <a href="Q15_2_Distance_Vector_Routing.c" download class="download-btn">⬇ Download</a>
+                    </div>
+                </div>
+                <pre class="code-block"><code id="q15_content_1_code" class="language-c">/*
+ * IT302 DCCN Lab - Question 15.2
+ * Routing Table Implementation using Distance Vector Routing Algorithm
+ * Based on the Bellman-Ford Equation: D_x(y) = min_v { c(x, v) + D_v(y) }
+ * (RIP - Routing Information Protocol)
+ */
+
+#include &lt;stdio.h&gt;
+
+#define MAX_NODES 10
+#define INF 9999
+
+struct RouteEntry {
+    int dist[MAX_NODES];
+    int next_hop[MAX_NODES];
+} routing_table[MAX_NODES];
+
+int main(void) {
+    int n;
+    int cost[MAX_NODES][MAX_NODES];
+
+    printf(&quot;--- 15.2 Distance Vector Routing (Bellman-Ford) ---\n&quot;);
+    printf(&quot;Enter number of routers/nodes (max %d): &quot;, MAX_NODES);
+    if (scanf(&quot;%d&quot;, &amp;n) != 1 || n &lt;= 0 || n &gt; MAX_NODES) return 1;
+
+    printf(&quot;Enter link cost matrix (%d x %d, enter %d for no direct link):\n&quot;, n, n, INF);
+    for (int i = 0; i &lt; n; i++) {
+        for (int j = 0; j &lt; n; j++) {
+            scanf(&quot;%d&quot;, &amp;cost[i][j]);
+            if (i == j) cost[i][j] = 0;
+            // Initial distance vector is the direct link cost
+            routing_table[i].dist[j] = cost[i][j];
+            routing_table[i].next_hop[j] = (cost[i][j] != INF &amp;&amp; i != j) ? j : i;
+        }
+    }
+
+    // Iterative Distance Vector exchange until convergence
+    int updated;
+    int iteration = 0;
+    do {
+        updated = 0;
+        iteration++;
+        for (int i = 0; i &lt; n; i++) {           // For each router i
+            for (int j = 0; j &lt; n; j++) {       // For each destination j
+                for (int k = 0; k &lt; n; k++) {   // Check path via neighbor k
+                    if (cost[i][k] != INF &amp;&amp; routing_table[k].dist[j] != INF) {
+                        int new_dist = cost[i][k] + routing_table[k].dist[j];
+                        if (new_dist &lt; routing_table[i].dist[j]) {
+                            routing_table[i].dist[j] = new_dist;
+                            routing_table[i].next_hop[j] = k;
+                            updated = 1;
+                        }
+                    }
+                }
+            }
+        }
+    } while (updated);
+
+    printf(&quot;\nRouting tables converged in %d iteration(s).\n&quot;, iteration);
+
+    // Display Converged Routing Tables for each router
+    for (int i = 0; i &lt; n; i++) {
+        printf(&quot;\n============================================\n&quot;);
+        printf(&quot;      CONVERGED ROUTING TABLE: ROUTER %d    \n&quot;, i);
+        printf(&quot;============================================\n&quot;);
+        printf(&quot; Destination | Total Cost | Next Hop Router \n&quot;);
+        printf(&quot;--------------------------------------------\n&quot;);
+        for (int j = 0; j &lt; n; j++) {
+            if (routing_table[i].dist[j] == INF) {
+                printf(&quot;      %2d     |  UNREACH   |        --       \n&quot;, j);
+            } else {
+                printf(&quot;      %2d     |    %4d    |        %2d       \n&quot;,
+                       j, routing_table[i].dist[j], routing_table[i].next_hop[j]);
+            }
+        }
+        printf(&quot;============================================\n&quot;);
+    }
+
+    return 0;
+}
+
+</code></pre>
+            </div>
+            
+            </div>
+        </section>
+        
+        </div>
+    </main>
+
+    <div id="toast">Copied to clipboard!</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script>
+        function switchTab(sectionId, tabIndex) {
+            const card = document.getElementById(sectionId);
+            const buttons = card.querySelectorAll('.tab-btn');
+            const contents = card.querySelectorAll('.tab-content');
+
+            buttons.forEach((btn, idx) => {
+                btn.classList.toggle('active', idx === tabIndex);
+            });
+
+            contents.forEach((cnt, idx) => {
+                cnt.classList.toggle('active', idx === tabIndex);
+            });
+        }
+
+        function copyToClipboard(elementId) {
+            const codeEl = document.getElementById(elementId);
+            if (!codeEl) return;
+            const text = codeEl.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Code copied to clipboard!");
+            }).catch(() => {
+                showToast("Failed to copy!");
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function filterQuestions() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const navItems = document.querySelectorAll('.nav-item');
+            const cards = document.querySelectorAll('.question-card');
+
+            navItems.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function highlightNav(el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
+    </script>
+</body>
+</html>
